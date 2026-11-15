@@ -34,9 +34,11 @@ textarea{min-height:240px;resize:vertical;line-height:32px;padding:4px 10px;back
 .row .l{width:34px;color:var(--mut)}.row .b{height:14px;background:var(--ac);border-radius:4px;min-width:2px}.row .v{margin-left:auto;font-variant-numeric:tabular-nums}
 .big{font-size:26px;font-weight:700}
 .mut{color:var(--mut);font-size:13px}
+input[type=time],input[type=tel],input[type=date],input[type=month],select{padding:10px;border:1px solid var(--ln);border-radius:8px;background:var(--bg);color:var(--tx);font:inherit;min-width:0}.lk{color:var(--ac);text-decoration:none;font-size:14px}.t span{min-width:0}nav button{font-size:14px;padding:10px 2px}
+#lk{position:fixed;inset:0;background:var(--bg);z-index:99;display:none;align-items:center;justify-content:center;flex-direction:column;gap:12px;padding:20px}
 </style></head><body><main>
 <nav id="nav"></nav><div id="v"></div>
-</main>
+</main><div id="lk"><h2>🔒 Határidőnapló</h2><input type="password" id="lp" inputmode="numeric" placeholder="PIN" style="width:200px;padding:12px;border:1px solid var(--ln);border-radius:8px;background:var(--card);color:var(--tx);font:inherit;text-align:center" onkeydown="if(event.key==='Enter')unlock()"><button class="sm" onclick="unlock()">Feloldás</button><div id="lm" class="mut"></div><div class="mut" style="max-width:280px;text-align:center;font-size:12px">Elfelejtett PIN esetén töröld az app adatait az eszközön, és lépj be újra a szinkronnal: a mentett adataid visszajönnek.</div></div>
 <script>
 var MN=['Január','Február','Március','Április','Május','Június','Július','Augusztus','Szeptember','Október','November','December'];
 var DN=['Hétfő','Kedd','Szerda','Csütörtök','Péntek','Szombat','Vasárnap'];
@@ -46,7 +48,7 @@ function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;
 function p(n){return(n<10?'0':'')+n}
 function ks(d){return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())}
 function dt(k){return new Date(k+'T12:00:00')}
-function fx(x){if(!x.inc){x.inc=x.i?[{a:x.i,m:x.m||''}]:[];delete x.i;delete x.m}return x}
+function fx(x){if(!x.inc){x.inc=x.i?[{a:x.i,m:x.m||''}]:[];delete x.i;delete x.m}if(!x.exp)x.exp=[];return x}
 function g(k){return fx(D[k]||{t:[],n:'',inc:[]})}
 function w(k){var x=fx(D[k]||(D[k]={t:[],n:'',inc:[]}));x.u=Date.now();dirty[k]=1;sched();return x}
 function ds(x){return x.inc.reduce(function(s,e){return s+(e.a||0)},0)}
@@ -54,48 +56,73 @@ function ft(n){return Math.round(n).toLocaleString('hu-HU')+' Ft'}
 var today=ks(new Date()),cur=today,view='day',my=new Date().getFullYear(),mm=new Date().getMonth(),sy=my;
 function go(v){view=v;render()}
 function render(){
- var tabs=[['day','Nap'],['month','Hónap'],['sum','Összesítés']];
+ var tabs=[['day','Nap'],['month','Hónap'],['sum','Összesítés'],['find','Keresés']];
  document.getElementById('nav').innerHTML=tabs.map(function(t){return '<button class="'+(view==t[0]?'on':'')+'" onclick="go(\''+t[0]+'\')">'+t[1]+'</button>'}).join('');
- document.getElementById('v').innerHTML=view=='day'?vDay():view=='month'?vMonth():vSum();
+ document.getElementById('v').innerHTML=view=='day'?vDay():view=='month'?vMonth():view=='find'?vFind():vSum();
 }
 function vDay(){
  var d=dt(cur),x=g(cur);
  var h='<div class="bar"><button onclick="mv(-1)">‹</button><h2>'+d.getFullYear()+'. '+MN[d.getMonth()].toLowerCase()+' '+d.getDate()+'.<br><span class="mut">'+DN[(d.getDay()+6)%7]+'</span></h2><button onclick="mv(1)">›</button></div>';
- h+='<div style="text-align:center;margin-bottom:10px"><button class="sm" onclick="cur=today;render()">Ma</button></div>';
- h+='<div class="card"><h3>Teendők</h3>'+x.t.map(function(t,i){return '<div class="t'+(t.d?' d':'')+'"><input type="checkbox" '+(t.d?'checked':'')+' onchange="tg('+i+')"><span>'+esc(t.x)+'</span><b onclick="rm('+i+')">✕</b></div>'}).join('')+'<input type="text" id="nt" placeholder="Új teendő…" style="margin-top:8px" onkeydown="if(event.key===\'Enter\')ad()"></div>';
- h+='<div class="card"><h3>Napi bevételek</h3>'+x.inc.map(function(e,i){return '<div class="t"><span>'+esc(e.m||'Bevétel')+'</span><strong>'+ft(e.a)+'</strong><b onclick="ri('+i+')">✕</b></div>'}).join('')+'<div style="display:flex;gap:8px;margin-top:8px"><input type="number" id="ia" inputmode="decimal" placeholder="Összeg (Ft)" style="flex:1"><input type="text" id="im" placeholder="Megjegyzés" style="flex:2" onkeydown="if(event.key===\'Enter\')ai()"><button class="sm" onclick="ai()">+</button></div><div style="margin-top:10px" class="mut">Napi összesen: <b style="color:var(--tx)">'+ft(ds(x))+'</b></div></div>';
+ h+='<div style="text-align:center;margin-bottom:10px"><input type="date" value="'+cur+'" onchange="if(this.value){cur=this.value;render()}" style="padding:8px;border:1px solid var(--ln);border-radius:8px;background:var(--card);color:var(--tx);font:inherit"> <button class="sm" onclick="cur=today;render()">Ma</button></div>';
+ var ADD='<input type="text" id="nt" placeholder="Új teendő…" style="margin-top:8px" onkeydown="if(event.key===\'Enter\')ad()"><div style="display:flex;gap:6px;margin-top:6px"><input type="time" id="nh" style="flex:1"><input type="text" id="nad" placeholder="Cím" style="flex:2"></div><div style="display:flex;gap:6px;margin-top:6px"><input type="tel" id="nph" placeholder="Telefon" style="flex:1"></div><div style="display:flex;gap:6px;margin-top:6px"><select id="nr" style="flex:1"><option value="">Egyszeri</option><option value="d">Naponta</option><option value="w">Hetente</option><option value="m">Havonta</option><option value="y">Évente</option></select><button class="sm" onclick="ad()">Hozzáad</button></div>';
+ h+='<div class="card"><h3>Teendők</h3>'+RT(cur).map(rv).join('')+x.t.map(function(t,i){return{t:t,i:i}}).sort(function(a,b){return(a.t.h||'99:99').localeCompare(b.t.h||'99:99')}).map(function(o){var t=o.t,i=o.i;return '<div class="t'+(t.d?' d':'')+'"><input type="checkbox" '+(t.d?'checked':'')+' onchange="tg('+i+')"><span>'+(t.h?'<strong>'+esc(t.h)+'</strong> ':'')+esc(t.x)+(t.ad?'<br><a class="lk" href="https://maps.apple.com/?q='+encodeURIComponent(t.ad)+'">📍 '+esc(t.ad)+'</a>':'')+(t.ph?'<br><a class="lk" href="tel:'+esc(t.ph)+'">📞 '+esc(t.ph)+'</a>':'')+'</span><b onclick="rm('+i+')">✕</b></div>'}).join('')+ADD+'</div>';
+ h+=bl('inc','Bevételek',x.inc);h+=bl('exp','Kiadások',x.exp);
  h+='<div class="card"><h3>Jegyzet</h3><textarea oninput="w(cur).n=this.value;save()">'+esc(x.n)+'</textarea></div>';
  return h;
 }
 function mv(n){var d=dt(cur);d.setDate(d.getDate()+n);cur=ks(d);render()}
-function ad(){var e=document.getElementById('nt'),v=e.value.trim();if(!v)return;w(cur).t.push({x:v,d:0});save();render();document.getElementById('nt').focus()}
+function ad(){var v=document.getElementById('nt').value.trim();if(!v)return;var f=function(n){return document.getElementById(n).value.trim()},fr=document.getElementById('nr').value,o={x:v,h:f('nh'),ad:f('nad'),ph:f('nph')};if(fr){var z=w('0-sablon');z.r=z.r||[];o.id=Date.now().toString(36);o.f=fr;o.s=cur;z.r.push(o)}else{o.d=0;w(cur).t.push(o)}save();render();document.getElementById('nt').focus()}
 function tg(i){var t=w(cur).t[i];t.d=t.d?0:1;save();render()}
 function rm(i){w(cur).t.splice(i,1);save();render()}
 function ai(){var a=parseFloat(document.getElementById('ia').value),m=document.getElementById('im').value.trim();if(!a)return;w(cur).inc.push({a:a,m:m});save();render();document.getElementById('ia').focus()}
 function ri(i){w(cur).inc.splice(i,1);save();render()}
-function mt(y,m){var s=0,pre=y+'-'+p(m+1)+'-';for(var k in D)if(k.indexOf(pre)==0)s+=ds(fx(D[k]));return s}
+function sm(L){return L.reduce(function(a,e){return a+(e.a||0)},0)}
+function mt(y,m,t){t=t||'inc';var s=0,pre=y+'-'+p(m+1)+'-';for(var k in D)if(k.indexOf(pre)==0)s+=sm(fx(D[k])[t]);return s}
 function vMonth(){
  var f=new Date(my,mm,1),off=(f.getDay()+6)%7,n=new Date(my,mm+1,0).getDate();
- var h='<div class="bar"><button onclick="mo(-1)">‹</button><h2>'+my+'. '+MN[mm].toLowerCase()+'</h2><button onclick="mo(1)">›</button></div><div class="g">';
+ var h='<div class="bar"><button onclick="mo(-1)">‹</button><h2>'+my+'. '+MN[mm].toLowerCase()+'</h2><button onclick="mo(1)">›</button></div><div style="text-align:center;margin-bottom:10px"><input type="month" value="'+my+'-'+p(mm+1)+'" onchange="if(this.value){var v=this.value.split(\'-\');my=+v[0];mm=+v[1]-1;render()}" style="padding:8px;border:1px solid var(--ln);border-radius:8px;background:var(--card);color:var(--tx);font:inherit"></div><div class="g">';
  h+=['H','K','Sze','Cs','P','Szo','V'].map(function(s){return '<div class="h">'+s+'</div>'}).join('');
  for(var i=0;i<off;i++)h+='<div></div>';
- for(var d=1;d<=n;d++){var k=my+'-'+p(mm+1)+'-'+p(d),x=g(k),has=x.t.length||x.n;
+ for(var d=1;d<=n;d++){var k=my+'-'+p(mm+1)+'-'+p(d),x=g(k),has=x.t.length||x.n||RT(k).length;
   h+='<div class="c'+(k==today?' today':'')+'" onclick="cur=\''+k+'\';view=\'day\';render()">'+d+(has?'<u></u>':'')+(ds(x)?'<i>'+Math.round(ds(x)).toLocaleString('hu-HU')+'</i>':'')+'</div>'}
- h+='</div><div class="card" style="margin-top:12px"><h3>Havi bevétel</h3><div class="big">'+ft(mt(my,mm))+'</div></div>';
+ h+='</div><div class="card" style="margin-top:12px"><h3>Havi összesítés</h3><div class="mut">Bevétel</div><div class="big">'+ft(mt(my,mm))+'</div><div class="mut" style="margin-top:6px">Kiadás: '+ft(mt(my,mm,'exp'))+'</div><div style="margin-top:6px">Nyereség: <b>'+ft(mt(my,mm)-mt(my,mm,'exp'))+'</b></div></div>';
  return h;
 }
 function mo(n){mm+=n;if(mm<0){mm=11;my--}if(mm>11){mm=0;my++}render()}
 function vSum(){
- var a=[],tot=0,mx=1;for(var m=0;m<12;m++){var v=mt(sy,m);a.push(v);tot+=v;if(v>mx)mx=v}
+ var a=[],e=[],ti=0,te=0,mx=1;for(var m=0;m<12;m++){var v=mt(sy,m),x=mt(sy,m,'exp');a.push(v);e.push(x);ti+=v;te+=x;if(v>mx)mx=v}
+ var cat={},pre=sy+'-';for(var k in D)if(k.indexOf(pre)==0)fx(D[k]).inc.forEach(function(r){var c=r.c||'Egyéb';cat[c]=(cat[c]||0)+(r.a||0)});
+ var cn=Object.keys(cat),cm=Math.max.apply(null,cn.map(function(c){return cat[c]}).concat([1]));
  var h='<div class="bar"><button onclick="sy--;render()">‹</button><h2>'+sy+'</h2><button onclick="sy++;render()">›</button></div>';
- h+='<div class="card"><h3>Éves bevétel</h3><div class="big">'+ft(tot)+'</div><div class="mut">Havi átlag: '+ft(tot/12)+'</div></div><div class="card"><h3>Havi bontás</h3>';
- h+=a.map(function(v,m){return '<div class="row"><span class="l">'+MN[m].slice(0,3)+'</span><div class="b" style="width:'+Math.round(v/mx*55)+'%"></div><span class="v">'+ft(v)+'</span></div>'}).join('')+'</div>';
- h+=vSync();
- h+='<div class="card"><h3>Mentés / visszaállítás</h3><p class="mut">Az adatok ezen az eszközön tárolódnak. Eszközök között másold át a mentést.</p><button class="sm" onclick="ex()">Mentés másolása</button> <button class="sm" onclick="im()">Betöltés</button><textarea id="bk" style="min-height:90px;line-height:1.3;margin-top:8px;background:var(--bg)" placeholder="Ide illeszd a mentést…"></textarea></div>';
+ h+='<div class="card"><h3>Éves összesítés</h3><div class="mut">Bevétel</div><div class="big">'+ft(ti)+'</div><div class="mut" style="margin-top:6px">Kiadás: '+ft(te)+'</div><div style="margin-top:6px">Nyereség: <b>'+ft(ti-te)+'</b></div><div class="mut">Havi átlag nyereség: '+ft((ti-te)/12)+'</div></div>';
+ h+='<div class="card"><h3>Havi nyereség</h3>'+a.map(function(v,m){return '<div class="row"><span class="l">'+MN[m].slice(0,3)+'</span><div class="b" style="width:'+Math.max(0,Math.round(v/mx*55))+'%"></div><span class="v">'+ft(v-e[m])+'</span></div>'}).join('')+'<div class="mut">A sáv a bevétel, a szám a nyereség.</div></div>';
+ h+='<div class="card"><h3>Bevétel kategóriánként</h3>'+(cn.map(function(c){return '<div class="row"><span class="l" style="width:64px">'+esc(c)+'</span><div class="b" style="width:'+Math.round(cat[c]/cm*45)+'%"></div><span class="v">'+ft(cat[c])+'</span></div>'}).join('')||'<p class="mut">Még nincs adat.</p>')+'</div>';
+ h+=vPin();h+=vSync();
+ h+='<div class="card"><h3>Mentés / visszaállítás</h3><p class="mut">Az adatok ezen az eszközön tárolódnak. Eszközök között másold át a mentést.</p><button class="sm" onclick="ex()">Mentés másolása</button> <button class="sm" onclick="csv()">CSV export ('+sy+')</button> <button class="sm" onclick="im()">Betöltés</button><textarea id="bk" style="min-height:90px;line-height:1.3;margin-top:8px;background:var(--bg)" placeholder="Ide illeszd a mentést…"></textarea></div>';
  return h;
 }
 function ex(){var s=JSON.stringify(D),e=document.getElementById('bk');e.value=s;e.select();try{navigator.clipboard.writeText(s)}catch(x){}}
 function im(){try{var o=JSON.parse(document.getElementById('bk').value);if(typeof o=='object'){D=o;var n=Date.now();for(var k in D){D[k].u=n;dirty[k]=1}save();sched();render()}}catch(e){alert('Hibás mentés.')}}
+var CAT=['Klíma','Villany','Javítás','Anyag','Egyéb'];
+function bl(k,title,L){var o=L.map(function(e,i){return '<div class="t"><span>'+esc((e.c?e.c+' · ':'')+(e.m||''))+'</span><strong>'+ft(e.a)+'</strong><b onclick="rl(\''+k+'\','+i+')">✕</b></div>'}).join('');
+ return '<div class="card"><h3>'+title+'</h3>'+o+'<div style="display:flex;gap:6px;margin-top:8px"><input type="number" id="'+k+'a" inputmode="decimal" placeholder="Ft" style="flex:1"><input type="text" id="'+k+'m" placeholder="Megjegyzés" style="flex:2"></div><div style="display:flex;gap:6px;margin-top:6px"><select id="'+k+'c" style="flex:1">'+CAT.map(function(c){return '<option>'+c+'</option>'}).join('')+'</select><button class="sm" onclick="al(\''+k+'\')">Hozzáad</button></div><div class="mut" style="margin-top:8px">Összesen: <b style="color:var(--tx)">'+ft(sm(L))+'</b></div></div>'}
+function al(k){var a=parseFloat(document.getElementById(k+'a').value);if(!a)return;w(cur)[k].push({a:a,m:document.getElementById(k+'m').value.trim(),c:document.getElementById(k+'c').value});save();render()}
+function rl(k,i){w(cur)[k].splice(i,1);save();render()}
+function vFind(){return '<input type="text" id="q" placeholder="Keresés: név, cím, telefon, jegyzet…" oninput="fnd(this.value)"><div id="qr" style="margin-top:12px"></div>'}
+function fnd(q){q=q.trim().toLowerCase();var r=[];if(q)Object.keys(D).sort().reverse().forEach(function(k){if(!/^\d{4}-/.test(k))return;var x=fx(D[k]),hit=[];x.t.forEach(function(t){if([t.x,t.ad,t.ph].join(' ').toLowerCase().indexOf(q)>=0)hit.push(t.x)});if((x.n||'').toLowerCase().indexOf(q)>=0)hit.push('Jegyzet: '+x.n.slice(0,60));x.inc.concat(x.exp).forEach(function(e){if(((e.m||'')+' '+(e.c||'')).toLowerCase().indexOf(q)>=0)hit.push((e.m||e.c)+' '+ft(e.a))});if(!hit.length&&k.indexOf(q)>=0)hit.push('Nap megnyitása');if(hit.length)r.push('<div class="card" style="cursor:pointer" onclick="cur=\''+k+'\';view=\'day\';render()"><b>'+k+'</b><div class="mut">'+esc(hit.slice(0,3).join(' • '))+'</div></div>')});document.getElementById('qr').innerHTML=r.slice(0,100).join('')||(q?'<p class="mut">Nincs találat.</p>':'')}
+function csv(){var r=['Dátum;Típus;Kategória;Megjegyzés;Összeg'],pre=sy+'-',q=function(s){return '"'+String(s||'').replace(/"/g,'""')+'"'};Object.keys(D).sort().forEach(function(k){if(k.indexOf(pre)!=0)return;var x=fx(D[k]);x.inc.forEach(function(e){r.push([k,'Bevétel',q(e.c),q(e.m),e.a].join(';'))});x.exp.forEach(function(e){r.push([k,'Kiadás',q(e.c),q(e.m),-e.a].join(';'))})});var s=r.join('\n'),t=document.getElementById('bk');t.value=s;t.select();try{navigator.clipboard.writeText(s)}catch(x){}}
+function TL(){return(D['0-sablon']&&D['0-sablon'].r)||[]}
+function RT(k){var d=dt(k),r=[];TL().forEach(function(t){var s=dt(t.s);if(d<s)return;var ok=t.f=='d'||(t.f=='w'&&d.getDay()==s.getDay())||(t.f=='m'&&d.getDate()==Math.min(s.getDate(),new Date(d.getFullYear(),d.getMonth()+1,0).getDate()))||(t.f=='y'&&d.getMonth()==s.getMonth()&&d.getDate()==s.getDate());if(ok)r.push(t)});return r}
+function rv(t){var dn=(g(cur).rd||{})[t.id];return '<div class="t'+(dn?' d':'')+'"><input type="checkbox" '+(dn?'checked':'')+' onchange="tr(\''+t.id+'\')"><span>↻ '+(t.h?'<strong>'+esc(t.h)+'</strong> ':'')+esc(t.x)+(t.ad?'<br><a class="lk" href="https://maps.apple.com/?q='+encodeURIComponent(t.ad)+'">📍 '+esc(t.ad)+'</a>':'')+(t.ph?'<br><a class="lk" href="tel:'+esc(t.ph)+'">📞 '+esc(t.ph)+'</a>':'')+'</span><b onclick="rt(\''+t.id+'\')">✕</b></div>'}
+function tr(id){var x=w(cur);x.rd=x.rd||{};x.rd[id]=x.rd[id]?0:1;save();render()}
+function rt(id){if(!confirm('Törlöd az ismétlődő teendőt minden napról?'))return;var z=w('0-sablon');z.r=(z.r||[]).filter(function(t){return t.id!==id});save();render()}
+function hs(s){var h=5381;s='hn'+s;for(var i=0;i<s.length;i++)h=((h<<5)+h+s.charCodeAt(i))|0;return String(h)}
+function lock(){if(!localStorage.getItem('hn_pin'))return;document.getElementById('lk').style.display='flex';document.getElementById('lp').value='';document.getElementById('lm').textContent=''}
+function unlock(){var i=document.getElementById('lp');if(hs(i.value)===localStorage.getItem('hn_pin'))document.getElementById('lk').style.display='none';else{document.getElementById('lm').textContent='Hibás PIN';i.value=''}}
+function setPin(){var v=document.getElementById('pn').value;if(!/^\d{4,8}$/.test(v)){alert('A PIN 4-8 számjegy legyen.');return}localStorage.setItem('hn_pin',hs(v));render()}
+function offPin(){var v=document.getElementById('pn').value;if(hs(v)===localStorage.getItem('hn_pin')){localStorage.removeItem('hn_pin');render()}else alert('Hibás PIN.')}
+function vPin(){var S='width:100%;padding:10px;border:1px solid var(--ln);border-radius:8px;background:var(--bg);color:var(--tx);font:inherit',on=!!localStorage.getItem('hn_pin');return '<div class="card"><h3>Jelszavas zár</h3><input type="password" id="pn" inputmode="numeric" placeholder="'+(on?'PIN a kikapcsoláshoz':'Új PIN (4-8 számjegy)')+'" style="'+S+'"><div style="margin-top:8px">'+(on?'<button class="sm" onclick="offPin()">Zár kikapcsolása</button> <button class="sm" onclick="lock()">Zárolás most</button>':'<button class="sm" onclick="setPin()">PIN beállítása</button>')+'</div><p class="mut">Megnyitáskor és 1 perc háttérben töltött idő után PIN-t kér. Az eszközön véd a kíváncsi szemektől.</p></div>'}
+var ha=0;document.addEventListener('visibilitychange',function(){if(document.hidden)ha=Date.now();else if(ha&&Date.now()-ha>60000)lock()});
 var FB={key:'AIzaSyCvb8aJxGt4dxlIzsBaNA4CdFpZ4yE2Gko',pid:'munkonaplo-b3742'};
 var A={};try{A=JSON.parse(localStorage.getItem('hn_a')||'{}')}catch(e){}
 var dirty={};try{dirty=JSON.parse(localStorage.getItem('hn_d')||'{}')}catch(e){}
@@ -132,7 +159,7 @@ function lo(){A={};tok='';localStorage.removeItem('hn_a');localStorage.setItem('
 setInterval(function(){if(A.rt&&!document.hidden)sync()},30000);
 document.addEventListener('visibilitychange',function(){if(!document.hidden)sync()});
 window.addEventListener('online',function(){sync()});
-render();
+render();lock();
 if(A.rt)sync();
 if('serviceWorker' in navigator&&location.protocol.indexOf('http')==0)navigator.serviceWorker.register('sw.js').catch(function(){});
 </script></body></html>
