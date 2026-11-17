@@ -99,8 +99,8 @@ function vSum(){
  h+='<div class="card"><h3>Havi nyereség</h3>'+a.map(function(v,m){return '<div class="row"><span class="l">'+MN[m].slice(0,3)+'</span><div class="b" style="width:'+Math.max(0,Math.round(v/mx*55))+'%"></div><span class="v">'+ft(v-e[m])+'</span></div>'}).join('')+'<div class="mut">A sáv a bevétel, a szám a nyereség.</div></div>';
  var pv=[],pm=1;for(var m=0;m<12;m++){var q=mt(sy-1,m);pv.push(q);if(q>pm)pm=q}pm=Math.max(pm,mx);var bi=a.indexOf(Math.max.apply(null,a));
  h+='<div class="card"><h3>'+sy+' és '+(sy-1)+' bevétele</h3>'+a.map(function(v,m){return '<div class="row"><span class="l">'+MN[m].slice(0,3)+'</span><div style="flex:1"><div class="b" style="width:'+Math.round(v/pm*100)+'%;margin-bottom:3px"></div><div class="b" style="width:'+Math.round(pv[m]/pm*100)+'%;background:var(--mut);opacity:.5"></div></div></div>'}).join('')+'<div class="mut">Sötét: '+sy+', halvány: '+(sy-1)+'.'+(Math.max.apply(null,a)>0?' Legerősebb hónap: '+MN[bi]+'.':'')+'</div></div>';
- var ec={},cu={};for(var k in D)if(k.indexOf(pre)==0){var dd=fx(D[k]);dd.exp.forEach(function(r){var c=r.c||'Egyéb';ec[c]=(ec[c]||0)+(r.a||0)});dd.inc.forEach(function(r){if(r.j){var nn=(JL().filter(function(j){return j.id==r.j})[0]||{}).c||'(ügyfél nélkül)';cu[nn]=(cu[nn]||0)+(r.a||0)}})}
- h+=bars2(cu,'Top ügyfelek (munkához rendelt bevétel)');h+=bars2(ec,'Kiadás kategóriánként');
+ var ec={};for(var k in D)if(k.indexOf(pre)==0)fx(D[k]).exp.forEach(function(r){var c=r.c||'Egyéb';ec[c]=(ec[c]||0)+(r.a||0)});
+ h+=bars2(ec,'Kiadás kategóriánként');
  h+='<div class="card"><h3>Bevétel kategóriánként</h3>'+(cn.map(function(c){return '<div class="row"><span class="l" style="width:64px">'+esc(c)+'</span><div class="b" style="width:'+Math.round(cat[c]/cm*45)+'%"></div><span class="v">'+ft(cat[c])+'</span></div>'}).join('')||'<p class="mut">Még nincs adat.</p>')+'</div>';
  return h}
 function vSet(){var h='<div class="bar"><button onclick="go(\'day\')">‹</button><h2>Beállítások</h2><span style="width:40px"></span></div>';
@@ -202,7 +202,7 @@ function bkOld(){var b=localStorage.getItem('hn_bk');return!b||(new Date(today)-
 function bf(){var f=new File([JSON.stringify({v:1,t:new Date().toISOString(),d:D})],'naplo-mentes-'+today+'.json',{type:'application/json'});try{localStorage.setItem('hn_bk',today)}catch(e){}
  if(navigator.canShare&&navigator.canShare({files:[f]}))navigator.share({files:[f]}).catch(function(){});else{var a=document.createElement('a');a.href=URL.createObjectURL(f);a.download=f.name;a.click()}render()}
 function rf(inp){var f=inp.files[0];if(!f)return;var r=new FileReader();r.onload=function(){var msg;try{var o=JSON.parse(r.result),d=o.d||o,n=0,t=Date.now();for(var k in d){if(!d[k]||typeof d[k]!='object')continue;var l=D[k];if(!l||(d[k].u||0)>(l.u||0)){D[k]=d[k];D[k].u=D[k].u||t;dirty[k]=1;n++}}save();sched();msg=n+' nap/tétel betöltve a fájlból.'}catch(e){msg='Hibás mentésfájl.'}render();var b=document.getElementById('bk');if(b)b.value=msg};r.readAsText(f)}
-var VER='v19',UPD=false;try{var pv=localStorage.getItem('hn_v');if(pv&&pv!=VER)UPD=true;localStorage.setItem('hn_v',VER)}catch(e){}
+var VER='v20',UPD=false;try{var pv=localStorage.getItem('hn_v');if(pv&&pv!=VER)UPD=true;localStorage.setItem('hn_v',VER)}catch(e){}
 function cvt(v){return '<div style="display:flex;gap:6px;margin-bottom:10px">'+[['week','Hét'],['month','Hónap']].map(function(t){return '<button class="sm" style="flex:1;'+(v==t[0]?'background:var(--ac);color:#fff;border-color:var(--ac)':'')+'" onclick="go(\''+t[0]+'\')">'+t[1]+'</button>'}).join('')+'</div>'}
 var jid='',jstt='';
 function JL(){return(D['0-munka']&&D['0-munka'].p)||[]}
