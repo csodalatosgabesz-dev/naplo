@@ -228,6 +228,26 @@ input[type=checkbox]:active{transform:scale(.88)}
 #qt.q-formal{font-family:Georgia,'Times New Roman',serif}
 #qt.q-formal .qh{border-top:4px double #000;border-bottom:4px double #000;padding:12px 0;text-align:center}
 #qt.q-formal .qh>div:first-child{justify-content:center}
+
+/* ===== v35 látvány ===== */
+body{background-image:radial-gradient(700px 360px at 8% -4%,color-mix(in srgb,var(--ac) 16%,transparent),transparent),radial-gradient(600px 320px at 100% 8%,color-mix(in srgb,var(--h2,var(--ac)) 12%,transparent),transparent);background-attachment:fixed;background-repeat:no-repeat}
+#nav{background:color-mix(in srgb,var(--card) 78%,transparent);-webkit-backdrop-filter:saturate(1.7) blur(18px);backdrop-filter:saturate(1.7) blur(18px)}
+.card h3::before{content:'';display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--ac);margin-right:8px;vertical-align:1px;box-shadow:0 0 0 3px color-mix(in srgb,var(--ac) 18%,transparent)}
+.card{transition:box-shadow .2s,transform .2s}
+.t input[type=checkbox]{-webkit-appearance:none;appearance:none;width:26px;height:26px;border-radius:50%;border:2px solid color-mix(in srgb,var(--mut) 55%,transparent);display:inline-grid;place-content:center;flex:none;transition:background .2s,border-color .2s,transform .15s;cursor:pointer}
+.t input[type=checkbox]:active{transform:scale(.88)}
+.t input[type=checkbox]:checked{background:var(--ac);border-color:var(--ac)}
+.t input[type=checkbox]:checked::after{content:'';width:6px;height:12px;border:solid #fff;border-width:0 2.5px 2.5px 0;transform:rotate(45deg) translate(-1px,-1px);animation:pop .28s cubic-bezier(.3,1.6,.5,1)}
+.t.d span .lk{text-decoration:none;opacity:.55}
+.t span .lk{font-size:13px;display:inline-block;margin-top:2px}
+.tli .mut{font-size:12px;text-decoration:none}
+.g .c{transition:transform .12s}.g .c:active{transform:scale(.94)}
+.g .c.hm{background:color-mix(in srgb,var(--ac) calc(var(--hm)*34%),var(--card))}
+.g .c.today{box-shadow:0 6px 16px color-mix(in srgb,var(--ac) 40%,transparent)}
+.empty{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 0 8px;color:var(--mut);text-align:center}
+.empty svg{width:64px;height:64px}
+#cf{position:fixed;inset:0;pointer-events:none;z-index:9999}
+.rm #cf{display:none}
 </style></head><body><main>
 <div id="hd"></div><nav id="nav"></nav><div id="v"></div>
 </main><button id="fab" onclick="qaOpen()" aria-label="Gyors bevitel"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button><div id="qa" onclick="if(event.target==this)qaClose()"><div id="qab"></div></div><div id="mo" onclick="if(event.target==this)moreClose()"><div id="mob"></div></div><div id="cg" onclick="if(event.target==this)cgClose()"><div id="cgb"></div></div><div id="ob"><div id="obb"></div></div><div id="tst"></div><div id="qt" style="display:none;position:fixed;inset:0;background:#fff;color:#000;z-index:98;overflow:auto;padding:20px"></div><div id="lk"><div class="lkc"><img id="lkl" alt="" width="76" height="76"><div class="lkt">4GoTherm Napló</div><div class="lks" id="lm">Add meg a PIN-kódot</div><div class="ldots" id="ldots"></div><div class="lpad" id="lpad"></div><div class="lkf">Elfelejtetted a PIN-t? Töröld az app adatait az eszközön, és lépj be újra a szinkronnal: a mentett adataid visszajönnek.</div></div></div>
@@ -257,14 +277,14 @@ function vDay(){
  var h='<div class="bar"><button onclick="mv(-1)">‹</button><h2>'+d.getFullYear()+'. '+MN[d.getMonth()].toLowerCase()+' '+d.getDate()+'.<br><span class="mut">'+DN[(d.getDay()+6)%7]+'</span></h2><button onclick="mv(1)">›</button></div>';
  h+='<div style="text-align:center;margin-bottom:10px"><input type="date" value="'+cur+'" onchange="if(this.value){cur=this.value;render()}" style="padding:8px;border:1px solid var(--ln);border-radius:8px;background:var(--card);color:var(--tx);font:inherit"> <button class="sm" onclick="cur=today;render()">Ma</button></div>';
  h+=alCard();if(!hid('s'))h+=sumCard();if(!hid('j'))h+=jobCard();h+=routeCard(cur);h+=dueCard();var ADD='<button class="sm" style="margin-top:10px" onclick="tgl(\'ftd\')">+ Új teendő</button><div id="ftd" style="display:none"><div style="display:flex;gap:6px;margin-top:8px"><input type="text" id="nt" placeholder="Új teendő…" style="flex:1" onkeydown="if(event.key===\'Enter\')ad()"><button class="sm" onclick="ad()">Hozzáad</button></div><a class="lk" style="cursor:pointer;display:inline-block;margin-top:8px" onclick="var e=document.getElementById(\'tdd\');e.style.display=e.style.display==\'none\'?\'block\':\'none\'">Részletek (idő, dátum, cím, telefon, ismétlődés)</a><div id="tdd" style="display:none"><div style="display:flex;gap:6px;margin-top:6px"><input type="time" id="nh" style="flex:1"><input type="text" id="nad" placeholder="Cím" style="flex:2"></div><input type="date" id="ndt" value="'+cur+'" style="width:100%;margin-top:6px"><input type="tel" id="nph" placeholder="Telefon" style="width:100%;margin-top:6px"><select id="nr" style="width:100%;margin-top:6px"><option value="">Egyszeri</option><option value="d">Naponta</option><option value="w">Hetente</option><option value="m">Havonta</option><option value="y">Évente</option></select></div></div>';
- if(!hid('t'))h+='<div class="card"><h3>Teendők</h3>'+(RT(cur).length||x.t.length?'':'<div class="mut" style="padding:6px 0">Nincs teendő erre a napra.</div>')+RT(cur).map(rv).join('')+x.t.map(function(t,i){return{t:t,i:i}}).sort(function(a,b){return(a.t.h||'99:99').localeCompare(b.t.h||'99:99')}).map(function(o){var t=o.t,i=o.i;return '<div class="t'+(t.d?' d':'')+'"><input type="checkbox" '+(t.d?'checked':'')+' onchange="tg('+i+')"><span>'+(t.h?'<strong>'+esc(t.h)+'</strong> ':'')+esc(t.x)+(t.ad?'<br><a class="lk" href="https://maps.apple.com/?q='+encodeURIComponent(t.ad)+'">📍 '+esc(t.ad)+'</a>':'')+(t.ph?'<br><a class="lk" href="tel:'+esc(t.ph)+'">📞 '+esc(t.ph)+'</a>':'')+'</span><b onclick="et('+i+')">✎</b><b onclick="rm('+i+')">✕</b></div>'}).join('')+ADD+'</div>';
+ if(!hid('t'))h+='<div class="card"><h3>Teendők</h3>'+(RT(cur).length||x.t.length?'':'<div class="empty"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="32" cy="32" r="24" opacity=".35"/><path d="M21 33l8 8 15-17" style="stroke:var(--ac)"/></svg><span>Nincs teendő erre a napra.</span></div>')+RT(cur).map(rv).join('')+x.t.map(function(t,i){return{t:t,i:i}}).sort(function(a,b){return(a.t.h||'99:99').localeCompare(b.t.h||'99:99')}).map(function(o){var t=o.t,i=o.i;return '<div class="t'+(t.d?' d':'')+'"><input type="checkbox" '+(t.d?'checked':'')+' onchange="tg('+i+')"><span>'+(t.h?'<strong>'+esc(t.h)+'</strong> ':'')+esc(t.x)+(t.ad?'<br><a class="lk" href="https://maps.apple.com/?q='+encodeURIComponent(t.ad)+'">📍 '+esc(t.ad)+'</a>':'')+(t.ph?'<br><a class="lk" href="tel:'+esc(t.ph)+'">📞 '+esc(t.ph)+'</a>':'')+'</span><b onclick="et('+i+')">✎</b><b onclick="rm('+i+')">✕</b></div>'}).join('')+ADD+'</div>';
  if(!hid('i'))h+=bl('inc','Bevételek',x.inc);if(!hid('e'))h+=bl('exp','Kiadások',x.exp);
  h+='<div class="card"><h3>Jegyzet</h3><textarea oninput="w(cur).n=this.value;save()">'+esc(x.n)+'</textarea></div>';
  return h;
 }
 function mv(n){var d=dt(cur);d.setDate(d.getDate()+n);cur=ks(d);render()}
 function ad(){var v=document.getElementById('nt').value.trim();if(!v)return;var dk=document.getElementById('ndt').value||cur,f=function(n){return document.getElementById(n).value.trim()},fr=document.getElementById('nr').value,o={x:v,h:f('nh'),ad:f('nad'),ph:f('nph')};if(fr){var z=w('0-sablon');z.r=z.r||[];o.id=Date.now().toString(36);o.f=fr;o.s=dk;z.r.push(o)}else{o.d=0;w(dk).t.push(o)}cur=dk;save();render();document.getElementById('nt').focus()}
-function tg(i){var t=w(cur).t[i];t.d=t.d?0:1;save();render()}
+function tg(i){var t=w(cur).t[i];t.d=t.d?0:1;save();render();if(t.d)allDone()}
 function rm(i){snap();w(cur).t.splice(i,1);save();render()}
 function ai(){var a=parseFloat(document.getElementById('ia').value),m=document.getElementById('im').value.trim();if(!a)return;w(cur).inc.push({a:a,m:m});save();render();document.getElementById('ia').focus()}
 function ri(i){w(cur).inc.splice(i,1);save();render()}
@@ -275,8 +295,9 @@ function vMonth(){
  var h=cvt('month')+'<div class="bar"><button onclick="mo(-1)">‹</button><h2>'+my+'. '+MN[mm].toLowerCase()+'</h2><button onclick="mo(1)">›</button></div><div style="text-align:center;margin-bottom:10px"><input type="month" value="'+my+'-'+p(mm+1)+'" onchange="if(this.value){var v=this.value.split(\'-\');my=+v[0];mm=+v[1]-1;render()}" style="padding:8px;border:1px solid var(--ln);border-radius:8px;background:var(--card);color:var(--tx);font:inherit"></div><div class="g">';
  h+=['H','K','Sze','Cs','P','Szo','V'].map(function(s){return '<div class="h">'+s+'</div>'}).join('');
  for(var i=0;i<off;i++)h+='<div></div>';
+ var MHM=1;for(var d0=1;d0<=n;d0++){var v0=ds(g(my+'-'+p(mm+1)+'-'+p(d0)));if(v0>MHM)MHM=v0}
  for(var d=1;d<=n;d++){var k=my+'-'+p(mm+1)+'-'+p(d),x=g(k),has=x.t.length||x.n||RT(k).length;
-  h+='<div class="c'+(k==today?' today':'')+'" onclick="cur=\''+k+'\';view=\'day\';render()">'+d+(has?'<u></u>':'')+(ds(x)?'<i>'+cmp(ds(x))+'</i>':'')+'</div>'}
+  var hv=ds(x),hm=hv>0?Math.min(1,.25+hv/MHM*.75):0;h+='<div class="c'+(k==today?' today':'')+(hm?' hm':'')+'"'+(hm?' style="--hm:'+hm.toFixed(2)+'"':'')+' onclick="cur=\''+k+'\';view=\'day\';render()">'+d+(has?'<u></u>':'')+(ds(x)?'<i>'+cmp(ds(x))+'</i>':'')+'</div>'}
  h+='</div><div class="card" style="margin-top:12px"><h3>Havi összesítés</h3><div class="mut">Bevétel</div><div class="big">'+ft(mt(my,mm))+'</div><div class="mut" style="margin-top:6px">Kiadás: '+ft(mt(my,mm,'exp'))+'</div><div style="margin-top:6px">Nyereség: <b>'+ft(mt(my,mm)-mt(my,mm,'exp'))+'</b></div><div class="mut" style="margin-top:6px">Kilométer: '+kf(mt(my,mm,'km'))+kcost(mt(my,mm,'km'))+'</div>'+goalHtml(mt(my,mm))+'</div>';
  return h;
 }
@@ -330,7 +351,7 @@ function csv(){var r=['Dátum;Típus;Kategória;Megjegyzés;Összeg'],pre=sy+'-'
 function TL(){return(D['0-sablon']&&D['0-sablon'].r)||[]}
 function RT(k){var d=dt(k),r=[];TL().forEach(function(t){var s=dt(t.s);if(d<s)return;var ok=t.f=='d'||(t.f=='w'&&d.getDay()==s.getDay())||(t.f=='m'&&d.getDate()==Math.min(s.getDate(),new Date(d.getFullYear(),d.getMonth()+1,0).getDate()))||(t.f=='y'&&d.getMonth()==s.getMonth()&&d.getDate()==s.getDate());if(ok)r.push(t)});return r}
 function rv(t){var dn=(g(cur).rd||{})[t.id];return '<div class="t'+(dn?' d':'')+'"><input type="checkbox" '+(dn?'checked':'')+' onchange="tr(\''+t.id+'\')"><span>↻ '+(t.h?'<strong>'+esc(t.h)+'</strong> ':'')+esc(t.x)+(t.ad?'<br><a class="lk" href="https://maps.apple.com/?q='+encodeURIComponent(t.ad)+'">📍 '+esc(t.ad)+'</a>':'')+(t.ph?'<br><a class="lk" href="tel:'+esc(t.ph)+'">📞 '+esc(t.ph)+'</a>':'')+'</span><b onclick="rt(\''+t.id+'\')">✕</b></div>'}
-function tr(id){var x=w(cur);x.rd=x.rd||{};x.rd[id]=x.rd[id]?0:1;save();render()}
+function tr(id){var x=w(cur);x.rd=x.rd||{};x.rd[id]=x.rd[id]?0:1;save();render();if(x.rd[id])allDone()}
 function rt(id){if(!confirm('Törlöd az ismétlődő teendőt minden napról?'))return;snap();var z=w('0-sablon');z.r=(z.r||[]).filter(function(t){return t.id!==id});save();render()}
 function hs(s){var h=5381;s='hn'+s;for(var i=0;i<s.length;i++)h=((h<<5)+h+s.charCodeAt(i))|0;return String(h)}
 function hx(b){return Array.from(new Uint8Array(b)).map(function(x){return('0'+x.toString(16)).slice(-2)}).join('')}
@@ -374,6 +395,8 @@ function fm(d){return p(d.getMonth()+1)+'.'+p(d.getDate())+'.'}
 function wk(n){var d=dt(cur);d.setDate(d.getDate()+n);cur=ks(d);render()}
 function vWeek(){var d=dt(cur);d.setDate(d.getDate()-(d.getDay()+6)%7);var e=new Date(d);e.setDate(e.getDate()+6);
  var h=cvt('week')+'<div class="bar"><button onclick="wk(-7)">‹</button><h2>'+fm(d)+' – '+fm(e)+'</h2><button onclick="wk(7)">›</button></div><div style="text-align:center;margin-bottom:10px"><button class="sm" onclick="cur=today;render()">Ez a hét</button></div>';
+ var wi=0,wx=0,wd=new Date(d);for(var q=0;q<7;q++){var wk0=fx(D[ks(wd)]||{t:[],n:'',inc:[]});wi+=ds(wk0);wx+=sm(wk0.exp);wd.setDate(wd.getDate()+1)}
+ h+='<div class="card"><h3>Heti összesítés</h3><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px"><div><div class="mut" style="font-size:12px">Bevétel</div><div class="big" style="font-size:17px">'+ft(wi)+'</div></div><div><div class="mut" style="font-size:12px">Kiadás</div><div class="big" style="font-size:17px">'+ft(wx)+'</div></div><div><div class="mut" style="font-size:12px">Nyereség</div><div class="big" style="font-size:17px;color:var(--ac)">'+ft(wi-wx)+'</div></div></div></div>';
  for(var i=0;i<7;i++){var k=ks(d),x=g(k),it=RT(k).map(function(t){return{h:t.h,x:'↻ '+t.x,d:(x.rd||{})[t.id]}}).concat(x.t.map(function(t){return{h:t.h,x:t.x,d:t.d}}));
   it.sort(function(a,b){return(a.h||'99:99').localeCompare(b.h||'99:99')});
   h+='<div class="card" style="cursor:pointer;'+(k==today?'border-color:var(--ac)':'')+'" onclick="cur=\''+k+'\';view=\'day\';render()"><b>'+DN[i]+' '+fm(d)+'</b>'+(ds(x)?' <span class="mut">· '+ft(ds(x))+'</span>':'')+(it.map(function(t){return '<div style="margin-top:4px'+(t.d?';text-decoration:line-through;color:var(--mut)':'')+'">'+(t.h?'<strong>'+esc(t.h)+'</strong> ':'')+esc(t.x)+'</div>'}).join('')||'<div class="mut">–</div>')+'</div>';
@@ -439,11 +462,11 @@ function sumCard(){if(cur!=today)return '';var x=g(today),rd=x.rd||{},nw=new Dat
  mv=mt(+today.slice(0,4),+today.slice(5,7)-1),gl=(D['0-sablon']||{}).g||0,sp=[],mx=1;
  for(var i=29;i>=0;i--){var d=dt(today);d.setDate(d.getDate()-i);var v=dayInc(ks(d));sp.push(v);if(v>mx)mx=v}
  var t30=sp.reduce(function(a,b){return a+b},0),nn=ag.filter(function(t){return!t.d&&t.h>=hm})[0],W=300,H=64,
- pts=sp.map(function(v,i){return[Math.round(i*W/29*10)/10,Math.round((H-6-(v/mx)*(H-14))*10)/10]}),line=pts.map(function(q){return q.join(',')}).join(' '),area='M0,'+H+' L'+line.split(' ').join(' L')+' L'+W+','+H+' Z',
+ pts=sp.map(function(v,i){return[Math.round(i*W/29*10)/10,Math.round((H-6-(v/mx)*(H-14))*10)/10]}),line=pts.map(function(q){return q.join(',')}).join(' '),curve=pts.map(function(q,i){if(!i)return 'M'+q[0]+','+q[1];var a=pts[i-1],mx2=(a[0]+q[0])/2;return 'C'+mx2+','+a[1]+' '+mx2+','+q[1]+' '+q[0]+','+q[1]}).join(' '),area=curve+' L'+W+','+H+' L0,'+H+' Z',
  cn=function(v){return '<span class="cn" data-v="'+Math.round(v)+'">'+ft(v)+'</span>'},up=unpaid(),lm=lowMat();
- return '<div class="card dash"><div class="dh"><b>Ma</b><span class="mut">'+DN[(new Date().getDay()+6)%7]+', '+fd(today)+'</span></div>'
+ return '<div class="card dash"><div class="dh"><b>'+greet()+'</b><span class="mut">'+DN[(new Date().getDay()+6)%7]+', '+fd(today)+'</span></div>'
  +'<div class="dr">'+(gl?ring(mv/gl,Math.round(mv/gl*100)+'%'):'')+'<div class="ds"><div class="k">Mai bevétel</div><div class="v">'+cn(dayInc(today))+'</div><div class="k" style="margin-top:8px">Havi bevétel</div><div class="v2">'+cn(mv)+'</div></div></div>'
- +'<svg viewBox="0 0 300 64" class="spk" aria-hidden="true"><defs><linearGradient id="spg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--ac)" stop-opacity=".32"/><stop offset="1" stop-color="var(--ac)" stop-opacity="0"/></linearGradient></defs><path d="'+area+'" fill="url(#spg)"/><polyline points="'+line+'" fill="none" stroke="var(--ac)" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="'+pts[29][0]+'" cy="'+pts[29][1]+'" r="3.6" fill="var(--ac)"/></svg><div class="mut" style="font-size:12px;margin:2px 0 12px">Elmúlt 30 nap bevétele: <b style="color:var(--tx)">'+ft(t30)+'</b></div>'
+ +'<svg viewBox="0 0 300 64" class="spk" aria-hidden="true"><defs><linearGradient id="spg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--ac);stop-opacity:.34"/><stop offset="1" style="stop-color:var(--ac);stop-opacity:0"/></linearGradient></defs><path d="'+area+'" style="fill:url(#spg)"/><path d="'+curve+'" fill="none" style="stroke:var(--ac)" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/><circle cx="'+pts[29][0]+'" cy="'+pts[29][1]+'" r="3.6" fill="var(--ac)"/></svg><div class="mut" style="font-size:12px;margin:2px 0 12px">Elmúlt 30 nap bevétele: <b style="color:var(--tx)">'+ft(t30)+'</b></div>'
  +'<div class="chips"><span class="chip">'+op+' nyitott teendő</span>'+(up.length?'<span class="chip wa">Kintlévőség: '+ft(up.reduce(function(a,o){return a+o.e.a},0))+'</span>':'')+(lm.length?'<span class="chip wa">Pótolandó anyag: '+lm.length+'</span>':'')+'</div>'
  +(ag.length?'<div class="tl">'+ag.slice(0,5).map(function(t){var n=nn&&t.h==nn.h&&t.x==nn.x;return '<div class="tli'+(t.d?' dn':'')+(n?' nx':'')+'"><span class="th">'+esc(t.h)+'</span><span class="tx">'+esc(t.x)+(t.ad?'<span class="mut"> · '+esc(t.ad)+'</span>':'')+'</span></div>'}).join('')+'</div>':'')
  +planLine()+(bkOld()?'<div class="mut" style="margin-top:10px;font-size:14px">⚠ Rég volt teljes mentés (Beállítások).</div>':'')+'</div>'}
@@ -452,7 +475,7 @@ function bkOld(){var b=localStorage.getItem('hn_bk');return!b||(new Date(today)-
 function bf(){var f=new File([JSON.stringify({v:1,t:new Date().toISOString(),d:D})],'naplo-mentes-'+today+'.json',{type:'application/json'});try{localStorage.setItem('hn_bk',today)}catch(e){}
  if(fsave(f)){}else if(navigator.canShare&&navigator.canShare({files:[f]}))navigator.share({files:[f]}).catch(function(){});else{var a=document.createElement('a');a.href=URL.createObjectURL(f);a.download=f.name;a.click()}render()}
 function rf(inp){var f=inp.files[0];if(!f)return;var r=new FileReader();r.onload=function(){var msg;try{var o=JSON.parse(r.result),d=o.d||o,n=0,t=Date.now();for(var k in d){if(!d[k]||typeof d[k]!='object')continue;var l=D[k];if(!l||(d[k].u||0)>(l.u||0)){D[k]=d[k];D[k].u=D[k].u||t;dirty[k]=1;n++}}save();sched();msg=n+' nap/tétel betöltve a fájlból.'}catch(e){msg='Hibás mentésfájl.'}render();var b=document.getElementById('bk');if(b)b.value=msg};r.readAsText(f)}
-var VER='v34',UPD=false;try{var pv=localStorage.getItem('hn_v');if(pv&&pv!=VER)UPD=true;localStorage.setItem('hn_v',VER)}catch(e){}
+var VER='v36',UPD=false;try{var pv=localStorage.getItem('hn_v');if(pv&&pv!=VER)UPD=true;localStorage.setItem('hn_v',VER)}catch(e){}
 function cvt(v){return '<div style="display:flex;gap:6px;margin-bottom:10px">'+[['week','Hét'],['month','Hónap']].map(function(t){return '<button class="sm" style="flex:1;'+(v==t[0]?'background:var(--ac);color:#fff;border-color:var(--ac)':'')+'" onclick="go(\''+t[0]+'\')">'+t[1]+'</button>'}).join('')+'</div>'}
 var jid='',jstt='';
 function JL(){return(D['0-munka']&&D['0-munka'].p)||[]}
@@ -741,6 +764,10 @@ RT(k).filter(function(t){return!rd[t.id]}).concat(x.t.filter(function(t){return!
 JL().filter(function(j){return j.st!='kész'&&j.s==k}).forEach(function(j){add('',j.n,j.a)});return r}
 function routeCard(k){var S=stops(k);if(!S.length)return '';var q=function(a){return encodeURIComponent(a)},last=S[S.length-1],wp=S.slice(0,-1).map(function(s){return s.a}).join('|'),gu='https://www.google.com/maps/dir/?api=1&travelmode=driving&destination='+q(last.a)+(wp?'&waypoints='+q(wp):'');
 return '<div class="card"><h3>Útvonal</h3>'+S.map(function(s,i){return '<div class="t" style="align-items:center"><span><b>'+(i+1)+'.</b> '+(s.h?'<strong>'+esc(s.h)+'</strong> · ':'')+esc(s.x)+'<br><span class="mut">'+esc(s.a)+'</span></span><a class="lk" style="white-space:nowrap" href="https://maps.apple.com/?dirflg=d&daddr='+q(s.a)+'">Navigál</a></div>'}).join('')+'<div style="margin-top:8px"><a class="lk" href="'+gu+'">'+(S.length>1?'Teljes útvonal egyben (Google Térkép)':'Útvonal (Google Térkép)')+'</a></div></div>'}
+
+function greet(){var h=new Date().getHours();return h<5?'Jó éjszakát!':h<10?'Jó reggelt!':h<18?'Jó napot!':'Jó estét!'}
+function allDone(){if(cur!=today)return;var x=g(today),rd=x.rd||{},all=x.t.length+RT(today).length;if(!all)return;if(x.t.some(function(t){return!t.d})||RT(today).some(function(t){return!rd[t.id]}))return;toast('Minden kész mára! 🎉',2800);if(!TH.rm)confetti()}
+function confetti(){var c=document.getElementById('cf');if(!c){c=document.createElement('canvas');c.id='cf';document.body.appendChild(c)}var W=c.width=innerWidth,H=c.height=innerHeight,x=c.getContext('2d');if(!x)return;var cols=['#1f6feb','#f5b301','#e5484d','#30a46c','#8e4ec6','#12a594'],P=[];for(var i=0;i<90;i++)P.push({x:W/2+(Math.random()-.5)*80,y:H*.62,vx:(Math.random()-.5)*11,vy:-Math.random()*14-5,s:Math.random()*7+4,r:Math.random()*6,vr:(Math.random()-.5)*.4,c:cols[i%cols.length]});var t0=Date.now();(function f(){var t=Date.now()-t0;x.clearRect(0,0,W,H);P.forEach(function(q){q.vy+=.45;q.x+=q.vx;q.y+=q.vy;q.r+=q.vr;x.save();x.globalAlpha=Math.max(0,1-t/1900);x.translate(q.x,q.y);x.rotate(q.r);x.fillStyle=q.c;x.fillRect(-q.s/2,-q.s/4,q.s,q.s/2);x.restore()});if(t<1900)requestAnimationFrame(f);else c.remove()})()}
 function sd(){try{localStorage.setItem('hn_d',JSON.stringify(dirty))}catch(e){}}
 function cfgOk(){return FB.key.indexOf('IDE')!=0}
 function sched(){sd();if(!A.rt||!cfgOk())return;clearTimeout(tm);tm=setTimeout(sync,1500)}
