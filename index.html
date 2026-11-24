@@ -541,7 +541,7 @@ var LOGO='data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAUDBAQEAwUEBAQ
 function BR(){return(D['0-sablon']&&D['0-sablon'].b)||{}}
 function bv(k,d){return BR()[k]||d||''}
 function sb(k,v){var z=w('0-sablon');z.b=z.b||{};z.b[k]=v.trim();save();render()}
-function hdr(){var h=new Date().getHours(),g=h<10?'Jó reggelt':h<18?'Szép napot':'Jó estét';document.getElementById('hd').innerHTML=(UN&&Date.now()-UN.t<30000?'<div class="card" style="border-color:var(--ac)">Törölve. <button class="sm" onclick="undo()">↩ Visszavonás</button></div>':'')+(UPD?'<div class="card" style="border-color:var(--ac)">✓ Az app frissült ('+VER+') <button class="sm" onclick="UPD=false;render()">OK</button></div>':'')+'<div class="hero'+(TH.hd=='c'?' hc':TH.hd=='m'?' hm':'')+'"><img class="hlg" src="'+LOGO+'" width="44" height="44" style="border-radius:12px"><div class="ht"><div class="hn">'+esc(bv('t','4GoTherm Napló'))+'</div><div class="hs">'+g+'! · '+VER+'<span id="hsy" class="hsy" onclick="sync()"></span></div></div><div class="hb"><button class="ib" onclick="go(\'find\')">🔍</button><button class="ib" onclick="go(\'set\')">⚙</button></div></div>'}
+function hdr(){var h=new Date().getHours(),g=h<10?'Jó reggelt':h<18?'Szép napot':'Jó estét';document.getElementById('hd').innerHTML=(UN&&Date.now()-UN.t<30000?'<div class="card" style="border-color:var(--ac)">Törölve. <button class="sm" onclick="undo()">↩ Visszavonás</button></div>':'')+(UPD?'<div class="card" style="border-color:var(--ac)">✓ Az app frissült ('+VER+') <button class="sm" onclick="UPD=false;render()">OK</button></div>':'')+'<div class="hero'+(TH.hd=='c'?' hc':TH.hd=='m'?' hm':'')+'"><img class="hlg" src="'+LOGO+'" width="44" height="44" style="border-radius:12px"><div class="ht"><div class="hn">'+esc(bv('t','4GoTherm Napló'))+'</div><div class="hs">'+g+'! · '+VER+'<span id="hsy" class="hsy" onclick="sync()"></span></div></div><div class="hb"><button class="ib" onclick="amTog()" aria-label="Összegek elrejtése">'+svg(HIDA?'eyeoff':'eye')+'</button><button class="ib" onclick="go(\'find\')">🔍</button><button class="ib" onclick="go(\'set\')">⚙</button></div></div>'}
 function vBr(){var f=function(k,l){return '<label class="mut" style="display:block;margin-top:8px;font-size:12px">'+l+'</label><input type="text" value="'+esc(BR()[k]||'')+'" onchange="sb(\''+k+'\',this.value)">'};return '<div class="card"><h3>Cégadatok</h3><div class="mut">Ezek a fejlécben és az árajánlatokon jelennek meg.</div>'+f('t','Az app neve (pl. 4GoTherm Napló)')+f('n','Cégnév')+f('s','Tevékenység (pl. Klíma- és villanyszerelés)')+f('p','Telefon')+f('e','E-mail')+f('a','Adószám')+f('b','Bankszámlaszám')+f('vat','ÁFA kulcs % (üresen: nincs ÁFA kiírás)')+f('rate','Órabér (Ft/óra)')+f('kmr','Útiköltség (Ft/km)')+f('c','Kategóriák, vesszővel elválasztva')+f('l_day','Fül neve: Nap')+f('l_week','Fül neve: Naptár')+f('l_job','Fül neve: Munkák')+f('l_cust','Fül neve: Ügyfél')+f('l_quote','Fül neve: Ajánlat')+f('l_calc','Fül neve: Kalkuláció')+f('l_sum','Fül neve: Összesítés')+qtUI()+'</div>'}
 function dayInc(k){return D[k]?ds(fx(D[k])):0}
 function ring(p,t){var r=42,c=2*Math.PI*r,o=c*(1-Math.min(1,Math.max(0,p)));return '<svg viewBox="0 0 100 100" class="ring"><circle cx="50" cy="50" r="42" class="rg0"/><circle cx="50" cy="50" r="42" class="rg1" stroke-dasharray="'+c.toFixed(1)+'" stroke-dashoffset="'+o.toFixed(1)+'" transform="rotate(-90 50 50)"/><text x="50" y="49" text-anchor="middle" class="rt">'+t+'</text><text x="50" y="64" text-anchor="middle" class="rs">tervezet</text></svg>'}
@@ -564,7 +564,7 @@ function bkOld(){var b=localStorage.getItem('hn_bk');return!b||(new Date(today)-
 function bf(){var f=new File([JSON.stringify({v:1,t:new Date().toISOString(),d:D})],'naplo-mentes-'+today+'.json',{type:'application/json'});try{localStorage.setItem('hn_bk',today)}catch(e){}
  if(fsave(f)){}else if(navigator.canShare&&navigator.canShare({files:[f]}))navigator.share({files:[f]}).catch(function(){});else{var a=document.createElement('a');a.href=URL.createObjectURL(f);a.download=f.name;a.click()}render()}
 function rf(inp){var f=inp.files[0];if(!f)return;var r=new FileReader();r.onload=function(){var msg;try{var o=JSON.parse(r.result),d=o.d||o,n=0,t=Date.now();for(var k in d){if(!d[k]||typeof d[k]!='object')continue;var l=D[k];if(!l||(d[k].u||0)>(l.u||0)){D[k]=d[k];D[k].u=D[k].u||t;dirty[k]=1;n++}}save();sched();msg=n+' nap/tétel betöltve a fájlból.'}catch(e){msg='Hibás mentésfájl.'}render();var b=document.getElementById('bk');if(b)b.value=msg};r.readAsText(f)}
-var VER='v47',UPD=false;try{var pv=localStorage.getItem('hn_v');if(pv&&pv!=VER)UPD=true;localStorage.setItem('hn_v',VER)}catch(e){}
+var VER='v48',UPD=false;try{var pv=localStorage.getItem('hn_v');if(pv&&pv!=VER)UPD=true;localStorage.setItem('hn_v',VER)}catch(e){}
 function cvt(v){return '<div style="display:flex;gap:6px;margin-bottom:10px">'+[['week','Hét'],['month','Hónap']].map(function(t){return '<button class="sm" style="flex:1;'+(v==t[0]?'background:var(--ac);color:#fff;border-color:var(--ac)':'')+'" onclick="go(\''+t[0]+'\')">'+t[1]+'</button>'}).join('')+'</div>'}
 var jid='',jstt='';
 function JL(){return(D['0-munka']&&D['0-munka'].p)||[]}
@@ -1046,4 +1046,15 @@ function mlpdf(id){var j=JL().filter(function(j){return j.id==id})[0];if(!j)retu
   fout(new File([mkpdf(im)],'Munkalap-'+(j.c||j.n||'munka').replace(/[^\w\-]+/g,'_')+'-'+today+'.pdf',{type:'application/pdf'}))})}
 /* fájlmentés a jelzésből egy koppintással */
 var _alGo=alGo;alGo=function(i){var a=ALS[i];if(a&&a.k=='b'){bf();return}_alGo(i)};
+
+/* ===== v48: összegek elrejtése ===== */
+var HIDA=false,NM=0;try{HIDA=localStorage.getItem('hn_ha')=='1'}catch(e){}
+ICO.eye='<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>';
+ICO.eyeoff='<path d="M3 3l18 18M10.6 5.1A10 10 0 0 1 12 5c6.4 0 10 7 10 7a17 17 0 0 1-3.2 4M6.5 6.6A17 17 0 0 0 2 12s3.6 7 10 7a10 10 0 0 0 4.2-.9"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/>';
+function noMask(){if(NM)return true;if(view=='quote'||view=='calc')return true;var q=document.getElementById('qt');return!!(q&&q.style.display=='block')}
+var _ft=ft;ft=function(n){return HIDA&&!noMask()?'•••• Ft':_ft(n)};
+function amTog(){HIDA=!HIDA;try{localStorage.setItem('hn_ha',HIDA?'1':'0')}catch(e){}render();toast(HIDA?'Összegek elrejtve (árajánlatban és kalkulációban látszanak)':'Összegek megjelenítve',2200)}
+['qpdf','qmail','qtext','qo'].forEach(function(n){var f=window[n];if(typeof f!='function')return;window[n]=function(){NM++;try{return f.apply(this,arguments)}finally{NM--}}});
+var _mlpdf=mlpdf;mlpdf=function(id){NM++;_mlpdf(id);setTimeout(function(){NM--},3000)};
+render();
 </script></body></html>
