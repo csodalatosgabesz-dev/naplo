@@ -564,7 +564,7 @@ function bkOld(){var b=localStorage.getItem('hn_bk');return!b||(new Date(today)-
 function bf(){var f=new File([JSON.stringify({v:1,t:new Date().toISOString(),d:D})],'naplo-mentes-'+today+'.json',{type:'application/json'});try{localStorage.setItem('hn_bk',today)}catch(e){}
  if(fsave(f)){}else if(navigator.canShare&&navigator.canShare({files:[f]}))navigator.share({files:[f]}).catch(function(){});else{var a=document.createElement('a');a.href=URL.createObjectURL(f);a.download=f.name;a.click()}render()}
 function rf(inp){var f=inp.files[0];if(!f)return;var r=new FileReader();r.onload=function(){var msg;try{var o=JSON.parse(r.result),d=o.d||o,n=0,t=Date.now();for(var k in d){if(!d[k]||typeof d[k]!='object')continue;var l=D[k];if(!l||(d[k].u||0)>(l.u||0)){D[k]=d[k];D[k].u=D[k].u||t;dirty[k]=1;n++}}save();sched();msg=n+' nap/tétel betöltve a fájlból.'}catch(e){msg='Hibás mentésfájl.'}render();var b=document.getElementById('bk');if(b)b.value=msg};r.readAsText(f)}
-var VER='v57',UPD=false;try{var pv=localStorage.getItem('hn_v');if(pv&&pv!=VER)UPD=true;localStorage.setItem('hn_v',VER)}catch(e){}
+var VER='v64',UPD=false;try{var pv=localStorage.getItem('hn_v');if(pv&&pv!=VER)UPD=true;localStorage.setItem('hn_v',VER)}catch(e){}
 function cvt(v){return '<div style="display:flex;gap:6px;margin-bottom:10px">'+[['week','Hét'],['month','Hónap']].map(function(t){return '<button class="sm" style="flex:1;'+(v==t[0]?'background:var(--ac);color:#fff;border-color:var(--ac)':'')+'" onclick="go(\''+t[0]+'\')">'+t[1]+'</button>'}).join('')+'</div>'}
 var jid='',jstt='';
 function JL(){return(D['0-munka']&&D['0-munka'].p)||[]}
@@ -725,7 +725,7 @@ function tgl(id){var e=document.getElementById(id);if(!e)return;e.style.display=
 function fd(k){return String(k||'').replace(/^(\d{4})-(\d\d)-(\d\d)$/,'$1. $2. $3.')}
 function moreOpen(){var bar=BAR(),L=TABS.filter(function(t){return bar.indexOf(t[0])<0&&!((t[0]=='quote'||t[0]=='calc')&&bar.indexOf('job')>=0)}).map(function(t){return[t[0],t[2],bv('l_'+t[0],t[1])]}).concat([['find','🔍','Keresés'],['set','⚙','Beállítások']]);document.getElementById('mob').innerHTML='<b style="font-size:18px">További menük</b>'+L.map(function(r){return '<button class="mrow" onclick="moreClose();go(\''+r[0]+'\')"><span>'+r[1]+'</span>'+esc(r[2])+'</button>'}).join('');iconify(document.getElementById('mob'));document.getElementById('mo').style.display='flex'}
 function moreClose(){document.getElementById('mo').style.display='none'}
-var lsy=0;window.addEventListener('scroll',function(){var y=window.pageYOffset||0,f=document.getElementById('fab');if(!f)return;f.style.transform=(y>lsy+6&&y>80)?'translateY(160px)':'';lsy=y},{passive:true});
+var lsy=0;window.addEventListener('scroll',function(){var y=window.pageYOffset||0,f=document.getElementById('fab');if(!f)return;f.style.transform='';lsy=y},{passive:true});
 var TABS=[['day','Nap','📅'],['week','Naptár','🗓'],['job','Munkák','🛠'],['cust','Ügyfél','👥'],['quote','Ajánlat','📄'],['calc','Kalkuláció','🧮'],['money','Pénz','💰'],['sum','Összesítés','📊','Összes.']],DEFB=['day','week','job','cust','money'];
 function hid(k){return(TH.dh||{})[k]||(TH.sm&&(k=='s'||k=='j'))}
 var PRE=[{n:'Logókék',c:'#1f6feb',h:'#1c5fd0',m:'',bg:'cool'},{n:'Éjszaka',c:'#5aa0ff',h:'#13315c',m:'dark',bg:'cool'},{n:'Narancs',c:'#e8590c',h:'#c2410c',m:'',bg:'warm'},{n:'Zöld',c:'#2e9e5b',h:'#1b7f45',m:'',bg:'neu'},{n:'Grafit',c:'#3b82f6',h:'#374151',m:'',bg:'neu'},{n:'Tiszta',c:'#111827',h:'#111827',m:'light',bg:'pure'}];
@@ -745,9 +745,9 @@ function vDes(){var cs=['#1f6feb','#e8590c','#2e9e5b','#8a4fd6','#d6336c','#0891
  +'<div class="mut" style="font-size:13px">Térköz</div>'+sg3('dn',[['c','Kompakt'],['n','Normál'],['a','Tágas']],'n')
  +'<div class="mut" style="font-size:13px">Lekerekítés</div>'+sg3('rr',[['sq','Szögletes'],['n','Normál'],['rd','Kerek']],'n')
  +'<div class="mut" style="font-size:13px">Árnyék</div>'+sg3('sh',[['no','Nincs'],['n','Finom'],['st','Erős']],'n')
- +'<div class="mut" style="font-size:13px">Fejléc</div>'+sg3('hd',[['f','Teljes'],['c','Kompakt'],['m','Minimális']],'f')+'<div class="mut" style="font-size:13px">Animációk</div>'+sg3('rm',[['','Be'],['1','Ki']],'')+'</div>'
+ +'<div class="mut" style="font-size:13px">Fejléc</div>'+sg3('hd',[['f','Teljes'],['c','Kompakt'],['m','Minimális']],'f')+'<div class="mut" style="font-size:13px">Animációk</div>'+sg3('rm',[['','Be'],['1','Ki']],'')+'<div class="mut" style="font-size:13px">Látványos hatások (időjárás, évszak, konfetti)</div>'+sg3('fx',[['','Be'],['1','Takarékos']],'')+'</div>'
  +'<div class="card"><h3>Alsó fülsor (legfeljebb 5)</h3>'+(TH.sm?'<div style="padding:10px 12px;border-radius:12px;background:color-mix(in srgb,var(--ac) 12%,transparent);margin-bottom:8px">Az <b>Egyszerű mód</b> be van kapcsolva, ezért az alsó fülsor rögzített (Nap, Naptár, Ügyfél). Itt a fülek csak kikapcsolt egyszerű módban módosíthatók.<br><button class="sm" style="margin-top:8px" onclick="TH.sm=0;thsave();render()">Egyszerű mód kikapcsolása</button></div>':'')+TABS.filter(function(t){return!((t[0]=='quote'||t[0]=='calc')&&bar.indexOf('job')>=0)}).map(function(t){return cb(bar.indexOf(t[0])>=0,'tbt(\''+t[0]+'\')',t[2]+' '+esc(bv('l_'+t[0],t[1])))}).join('')+'<div class="mut" style="font-size:13px;margin:10px 0 4px">Induló fül</div><select onchange="st2(\'st\',this.value)" style="width:100%"><option value="">Nap</option>'+TABS.filter(function(t){return t[0]!='day'}).map(function(t){return '<option value="'+t[0]+'"'+(TH.st==t[0]?' selected':'')+'>'+esc(bv('l_'+t[0],t[1]))+'</option>'}).join('')+'</select></div>'
- +'<div class="card"><h3>Nap fülön látszik</h3>'+[['s','Ma összegzés'],['t','Teendők'],['i','Bevételek'],['e','Kiadások'],['j','Folyamatban lévő munkák']].map(function(r){return cb(!hid(r[0]),'dht(\''+r[0]+'\')',r[1])}).join('')+'</div>'
+ +'<div class="card"><h3>Nap fülön látszik</h3>'+[['s','Ma összegzés'],['t','Teendők'],['i','Bevételek'],['e','Kiadások'],['j','Folyamatban lévő munkák'],['w','Heti összefoglaló']].map(function(r){return cb(!hid(r[0]),'dht(\''+r[0]+'\')',r[1])}).join('')+'</div>'
  +'<div class="card"><button class="sm" onclick="thr()">Alaphelyzet</button><p class="mut">A megjelenés beállításai eszközönként külön tárolódnak.</p></div>'}
 var DIS={};try{DIS=JSON.parse(localStorage.getItem('hn_dis')||'{}')}catch(e){}
 var ALS=[],alAll=false;
@@ -1202,4 +1202,402 @@ function fgAdd(id){var d=document.getElementById('fgd').value||today,t=document.
 function fgDel(id,i){if(!confirm('Törlöd a bejegyzést?'))return;var z=w('0-eszk');z.e.forEach(function(e){if(e.id==id&&e.fg)e.fg.splice(i,1)});save();dvr()}
 function fgCsv(id){var e=DV().filter(function(e){return e.id==id})[0];if(!e)return;var q=function(v){return '"'+String(v==null?'':v).replace(/"/g,'""')+'"'},rows=[['Dátum','Típus','Mennyiség (kg)','Megjegyzés']].concat((e.fg||[]).slice().sort(function(a,b){return a.d.localeCompare(b.d)}).map(function(x){return[x.d,x.t,x.k,x.n]}));fout(new File(['﻿'+['Berendezés: '+e.t,'Gyári szám: '+(e.sn||''),'Ügyfél: '+cname(e.cu),'Hűtőközeg: '+(e.rf||'')+' · '+(e.ch||'')+' kg'].map(q).join(';')+'\n'+rows.map(function(r){return r.map(q).join(';')}).join('\n')],'F-gaz-naplo-'+(e.sn||e.t).replace(/[^\w\-]+/g,'_')+'.csv',{type:'text/csv'}))}
 var _alerts=alerts;alerts=function(){var r=_alerts();try{DV().forEach(function(e){var n=fgNext(e);if(n&&n<=plusD(today,30))r.push({k:'fg'+e.id+n,lv:n<today?'hi':'mid',tx:'F-gáz szivárgásvizsgálat '+(n<today?'lejárt: ':'esedékes: ')+e.t+' ('+cname(e.cu)+') – '+fd(n),nv:'dev'})})}catch(x){}return r};
+
+/* ===== v58: animációk ===== */
+var A58={k:'',t0:Date.now(),busyD:0,tg:null,st:null,nt:undefined,wx:0};
+A58.ok=function(){try{if(TH&&TH.rm)return false;if(window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches)return false}catch(e){}return true};
+A58.lp=function(){return document.documentElement.classList.contains('lp')};
+(function(){var st=document.createElement('style');st.textContent=
+/* kártyák sorai besúsznak */
+'@keyframes ci58{from{opacity:0;transform:translateX(-14px)}}'
++'#v.s58 .t,#v.s58 .row,#v.s58 .res{animation:ci58 .34s cubic-bezier(.2,.8,.3,1) backwards;animation-delay:calc(var(--i,0)*35ms + 120ms)}'
+/* nézetváltás iránya */
++'@keyframes cx58{from{opacity:0;transform:translateX(var(--dx,0px))}to{opacity:1;transform:none}}'
++'#v.vin.vd58>*{animation-name:cx58}'
++'.xhero{max-width:none;margin-left:0;margin-right:0}'
+/* mentve jelzés */
++'#sv58{position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);left:50%;transform:translate(-50%,-80px);opacity:0;z-index:9998;pointer-events:none;display:flex;align-items:center;gap:6px;padding:7px 14px 7px 10px;border-radius:99px;background:var(--card);color:var(--tx);border:1px solid var(--ln);box-shadow:0 8px 24px rgba(0,0,0,.18);font-size:13px;font-weight:700}'
++'#sv58 svg{width:18px;height:18px;fill:none;stroke:#30a46c;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}'
++'#sv58 path{stroke-dasharray:24;stroke-dashoffset:24}'
++'@keyframes svd{0%{transform:translate(-50%,-80px);opacity:0}14%{transform:translate(-50%,0);opacity:1}82%{transform:translate(-50%,0);opacity:1}100%{transform:translate(-50%,-80px);opacity:0}}'
++'@keyframes svc{to{stroke-dashoffset:0}}'
++'#sv58.on{animation:svd 1.8s cubic-bezier(.2,.9,.3,1) both}#sv58.on path{animation:svc .4s .2s ease-out both}'
+/* szinkron ikon */
++'.sy58{width:14px;height:14px;vertical-align:-2px;margin-right:4px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}'
++'@keyframes sysp{to{transform:rotate(360deg)}}@keyframes sypop{0%{transform:scale(.6)}60%{transform:scale(1.25)}100%{transform:none}}'
++'.sy-syncing{color:#f5a524;animation:sysp 1s linear infinite}.sy-ok{color:#30a46c}.sy-err{color:#e5484d}.sy-offline,.sy-idle{color:#9aa6b8}'
++'.sy-ok.fresh{animation:sypop .5s ease-out}.sy-ok.fresh .ck{stroke-dasharray:14;animation:svc .5s .1s ease-out both;stroke-dashoffset:14}'
+/* pipa és sor */
++'@keyframes ckd{0%{clip-path:inset(70% 100% 0 0)}40%{clip-path:inset(70% 0 0 0)}100%{clip-path:inset(0 0 0 0)}}'
++'@keyframes ckr{from{box-shadow:0 0 0 0 color-mix(in srgb,var(--ac) 55%,transparent)}to{box-shadow:0 0 0 12px transparent}}'
++'@keyframes tgf{from{opacity:1}35%{opacity:.35}}'
++'.t.d.tgd input[type=checkbox]:checked{animation:ckr .55s ease-out}'
++'.t.d.tgd input[type=checkbox]:checked::after{animation:ckd .38s ease-out both}'
++'.t.d.tgd span{animation:tgf .6s ease-out}'
+/* ajánlat státusz */
++'@keyframes stp58{0%{transform:scale(.55);filter:brightness(1.7)}55%{transform:scale(1.22)}100%{transform:none}}'
++'.stp58{animation:stp58 .55s cubic-bezier(.3,1.4,.5,1)}'
+/* haptic elem */
++'#hp58{position:fixed;left:-120px;top:-120px;width:40px;height:40px;opacity:0;pointer-events:none}'
+/* időjárás: szél, sűrűbb köd */
++'.wxl{overflow:hidden}@keyframes wnd58{from{transform:translateX(0)}to{transform:translateX(1200%)}}'
++'.wxl .wnd{position:absolute;left:-30%;width:110px;height:2px;border-radius:2px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.75),transparent);animation:wnd58 linear infinite}'
++'.rm #sv58,.rm #hp58,.rm .wxl .wnd{display:none}';
+document.head.appendChild(st)})();
+
+function hap(k){try{if(!A58.ok())return;if(navigator.vibrate){navigator.vibrate(k=='ok'?[12,40,18]:k=='del'?22:10);return}
+ var l=document.getElementById('hp58');if(!l){l=document.createElement('label');l.id='hp58';l.setAttribute('aria-hidden','true');l.innerHTML='<input type="checkbox" switch tabindex="-1">';document.body.appendChild(l)}l.click()}catch(e){}}
+
+/* --- nézet-kulcs: akkor animálunk, ha tényleg új nézet / hónap / év / nap jön --- */
+function vkey58(){return view+'|'+sy+'|'+my+'|'+mm+'|'+(view=='day'?cur:'')}
+var _post58=post;
+post=function(){_post58.apply(this,arguments);try{x58()}catch(e){}};
+function x58(){var key=vkey58(),nw=key!=A58.k;A58.k=key;
+ if(!A58.ok()){A58.tg=null;A58.st=null;return}
+ tgMark();stMark();wxIn();
+ if(nw){stagger();counts();bars();lines()}}
+
+function stagger(){var v=document.getElementById('v');if(!v)return;
+ v.querySelectorAll('.card').forEach(function(c){var n=0;Array.prototype.forEach.call(c.children,function(e){if(e.classList.contains('t')||e.classList.contains('row')||e.classList.contains('res'))e.style.setProperty('--i',Math.min(n++,14))})});
+ v.classList.add('s58');clearTimeout(A58.t1);A58.t1=setTimeout(function(){v.classList.remove('s58')},1100)}
+
+/* --- számok felpörgetése --- */
+function counts(){var v=document.getElementById('v');if(!v)return;var RX=/^\s*([-−–]?)\s*(\d[\d\s  ]*)\s*Ft\s*$/,i=0;
+ Array.prototype.forEach.call(v.querySelectorAll('.big,.row>.v,.card b,.card strong'),function(e){
+  if(i>=40||e.children.length||e.classList.contains('cn')||e.closest('.cn'))return;
+  var m=RX.exec(e.textContent);if(!m)return;var val=parseInt(m[2].replace(/\D/g,''),10)*(m[1]?-1:1);if(!isFinite(val)||Math.abs(val)<10)return;
+  var txt=e.textContent,t0=performance.now()+Math.min(i,10)*35;i++;e.textContent=ft(0);
+  (function(e,val,txt,t0){function s(t){if(!e.isConnected)return;var p=Math.min(1,Math.max(0,(t-t0)/800)),q=1-Math.pow(1-p,3);e.textContent=p<1?ft(val*q):txt;if(p<1)requestAnimationFrame(s)}requestAnimationFrame(s)})(e,val,txt,t0)})}
+
+/* --- grafikon oszlopok és vonal --- */
+function bars(){var v=document.getElementById('v');if(!v)return;var i=0;
+ v.querySelectorAll('.row .b').forEach(function(b){var w=b.style.width;if(!w||w=='0%'||!b.animate)return;try{b.animate([{width:'0px'},{width:w}],{duration:750,delay:Math.min(i,16)*45,easing:'cubic-bezier(.2,.8,.3,1)',fill:'backwards'})}catch(e){}i++})}
+function lines(){document.querySelectorAll('#v .spk').forEach(function(s){var ps=s.querySelectorAll('path'),a=ps[0],c=ps[1],d=s.querySelector('circle');
+ try{if(c&&c.animate){c.setAttribute('pathLength','1');c.style.strokeDasharray='1';c.animate([{strokeDashoffset:1},{strokeDashoffset:0}],{duration:1100,easing:'ease-out',fill:'backwards'}).onfinish=function(){c.style.strokeDasharray=''}}
+ if(a&&a.animate)a.animate([{opacity:0},{opacity:1}],{duration:900,delay:500,fill:'backwards'});
+ if(d&&d.animate)d.animate([{opacity:0},{opacity:1}],{duration:300,delay:1000,fill:'backwards'})}catch(e){}})}
+
+/* --- mentve jelzés --- */
+var _save58=save;
+save=function(){_save58.apply(this,arguments);try{svNote()}catch(e){}};
+function svNote(){if(!A58.ok()||document.hidden||Date.now()-A58.t0<3000)return;if(typeof busy!=='undefined'&&busy)return;
+ clearTimeout(A58.sv);A58.sv=setTimeout(function(){var e=document.getElementById('sv58');if(!e){e=document.createElement('div');e.id='sv58';e.setAttribute('aria-hidden','true');e.innerHTML='<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Mentve';document.body.appendChild(e)}
+  e.classList.remove('on');void e.offsetWidth;e.classList.add('on')},500)}
+
+/* --- szinkron ikon --- */
+var HS58={s:'',t:0};
+hsync=function(){var e=document.getElementById('hsy');if(!e)return;if(!A.rt){e.innerHTML='';return}
+ var st=(navigator.onLine===false)?'offline':SYNCST,T={ok:'Szinkronizálva',syncing:'Szinkronizálás…',err:'Szinkron hiba',offline:'Offline',idle:'Szinkron'};
+ if(st!=HS58.s){HS58.s=st;HS58.t=Date.now()}
+ var cl='<path d="M7 18h10.5a4 4 0 0 0 .6-7.95A6 6 0 0 0 6.4 9.2 4.4 4.4 0 0 0 7 18z"/>',ic;
+ if(st=='syncing')ic='<path d="M20 12a8 8 0 1 1-2.4-5.7"/><path d="M20 4v4.5h-4.5"/>';
+ else if(st=='ok')ic=cl+'<path class="ck" d="M9.5 13.2l2 2 3.6-4"/>';
+ else if(st=='err')ic=cl+'<path d="M12 11v3M12 16.3v.1"/>';
+ else if(st=='offline')ic=cl+'<path d="M4 4l16 16"/>';
+ else ic=cl;
+ e.innerHTML=' · <svg viewBox="0 0 24 24" class="sy58 sy-'+st+(st=='ok'&&Date.now()-HS58.t<1500&&A58.ok()?' fresh':'')+'">'+ic+'</svg>'+T[st]};
+
+/* --- pipa: a sor halványul, a pipa kirajzolódik --- */
+var _tg58=tg;
+tg=function(i){var t=null;try{t=w(cur).t[i]}catch(e){}if(t)A58.tg={i:i,d:!t.d};_tg58(i);if(t)hap(t.d?'ok':'tap')};
+function tgMark(){var o=A58.tg;A58.tg=null;if(!o||!o.d)return;var inp=document.querySelector('#v input[onchange="tg('+o.i+')"]'),r=inp&&inp.closest('.t');if(!r)return;r.classList.add('tgd');setTimeout(function(){r.classList.remove('tgd')},900)}
+
+/* --- törlés: kicsúszik, a többi összezárul (minden ✕ gombra) --- */
+document.addEventListener('click',function(ev){
+ var b=ev.target&&ev.target.closest&&ev.target.closest('b[onclick],button[onclick]');
+ if(!b||((b.textContent||'').trim()!=='✕'&&!b.querySelector('path[d^="M6 6l12 12"]')))return;
+ if(b.dataset.go){delete b.dataset.go;return}
+ hap('del');
+ var row=b.closest('.t,.row,tr');if(!row||!A58.ok()||!row.animate||A58.busyD)return;
+ ev.stopPropagation();ev.preventDefault();A58.busyD=1;
+ var h=row.offsetHeight,cs=getComputedStyle(row),done=0,fin=function(){if(done)return;done=1;A58.busyD=0;b.dataset.go=1;b.click()};
+ row.style.overflow='hidden';row.style.pointerEvents='none';
+ var k0={transform:'translateX(0)',opacity:1,height:h+'px',marginTop:cs.marginTop,marginBottom:cs.marginBottom,paddingTop:cs.paddingTop,paddingBottom:cs.paddingBottom},
+     k1={transform:'translateX(55%)',opacity:0,height:h+'px',marginTop:cs.marginTop,marginBottom:cs.marginBottom,paddingTop:cs.paddingTop,paddingBottom:cs.paddingBottom,offset:.5},
+     k2={transform:'translateX(55%)',opacity:0,height:'0px',marginTop:'0px',marginBottom:'0px',paddingTop:'0px',paddingBottom:'0px'};
+ try{row.animate([k0,k1,k2],{duration:380,easing:'cubic-bezier(.4,0,.2,1)',fill:'forwards'}).onfinish=fin}catch(e){fin()}
+ setTimeout(fin,700)},true);
+
+/* --- konfetti: elfogadott ajánlat, kifizetett tétel --- */
+function party(t){hap('ok');if(t)toast(t,2400);if(A58.ok()&&!A58.lp())confetti()}
+var _qst58=qst;
+qst=function(id,v){A58.st={id:id,v:v};_qst58(id,v);if(v=='elfogadva')party('Elfogadott ajánlat! 🎉');else if(v=='kész')party('Kész munka! ✓');else hap('tap')};
+function stMark(){var o=A58.st;A58.st=null;if(!o)return;var q=document.querySelector('#v [onclick*="qo(\''+o.id+'\'"]'),r=q&&q.closest('.t'),b=r&&r.querySelector('span[style*="border-radius:99px"]');if(!b)return;b.classList.add('stp58');setTimeout(function(){b.classList.remove('stp58')},800)}
+var _pd58=pd;
+pd=function(k,i){var e=null;try{e=w(cur)[k][i]}catch(x){}var was=e&&e.np;_pd58(k,i);if(was)party('Kifizetve ✓')};
+var _pdk58=pdk;
+pdk=function(k,i){var e=null;try{e=w(k).inc[i]}catch(x){}var was=e&&e.np;_pdk58(k,i);if(was)party('Kifizetve ✓')};
+var _al58=al;
+al=function(k){_al58(k);hap('tap')};
+
+/* --- nézetváltás iránya a fülek sorrendje szerint --- */
+function dir58(a,b){if(a==b)return 0;var o=[];document.querySelectorAll('#nav [onclick]').forEach(function(e){var m=/go\('([a-z0-9]+)'\)/.exec(e.getAttribute('onclick')||'');if(m)o.push(m[1])});
+ var ia=o.indexOf(a),ib=o.indexOf(b);if(ia>=0&&ib>=0)return ib>ia?1:-1;if(ia<0&&ib>=0)return -1;return 1}
+var _go58=go;
+go=function(v){var el=document.getElementById('v');try{var d=dir58(view,v);if(el){el.style.setProperty('--dx',(d*36)+'px');el.classList.toggle('vd58',d!=0)}}catch(e){}_go58(v)};
+
+/* --- időjárás: szél, sűrűbb köd, finom megjelenés, nappal/éjszaka átúszás --- */
+var _wl58=wxLayer;
+wxLayer=function(c,night){var h=_wl58(c,night),ws=0,add='',i,R=function(k){return((k*7919)%97)/97};
+ try{ws=(WXD&&WXD.current&&+WXD.current.wind_speed_10m)||0}catch(e){}
+ if(ws>=20){var n=Math.min(22,Math.round(ws/2.2));for(i=0;i<n;i++)add+='<i class="wnd" style="top:'+Math.round(6+R(i+1)*86)+'%;width:'+(70+Math.round(R(i+4)*110))+'px;opacity:'+(night?.35:.6).toFixed(2)+';animation-duration:'+Math.max(1.2,(5.5-ws/12+R(i+2)*2)).toFixed(1)+'s;animation-delay:-'+(R(i+3)*6).toFixed(1)+'s"></i>'}
+ if(c==45||c==48)for(i=0;i<3;i++)add+='<b class="fg" style="top:'+(55+i*60)+'px;height:64px;opacity:.75;animation-duration:'+(11+i*3)+'s;animation-delay:-'+(i*4)+'s"></b>';
+ return add?h.replace(/<\/div>$/,add+'</div>'):h};
+function wxIn(){if(A58.wx)return;var l=document.querySelector('.xhero .wxl');if(!l)return;A58.wx=1;try{if(l.animate)l.animate([{opacity:0},{opacity:1}],{duration:1400,easing:'ease-out'})}catch(e){}}
+setInterval(function(){try{if(view!='day'||document.hidden)return;var x=wxCtx();if(!x)return;
+ if(A58.nt!==undefined&&A58.nt!==x.night){var old=document.querySelector('.xhero .wxl'),cl=old&&old.cloneNode(true);render();var nh=document.querySelector('.xhero');
+  if(cl&&nh&&cl.animate&&A58.ok()){cl.style.zIndex=2;nh.insertBefore(cl,nh.firstChild);cl.animate([{opacity:1},{opacity:0}],{duration:2200,easing:'ease-in-out',fill:'forwards'}).onfinish=function(){cl.remove()}}}
+ A58.nt=x.night}catch(e){}},30000);
+
+/* ===== v59: további animációk ===== */
+var A59={k:'',bn:null,un:0,mv:0,lko:0,det:0};
+(function(){var st=document.createElement('style');st.textContent=
+/* kártya benyomódás */
+'.card[onclick]:active,.res:active,.dr:active{transform:scale(.985)}'
+/* húzásra frissítés */
++'#pr59{position:fixed;top:calc(env(safe-area-inset-top,0px) + 8px);left:50%;width:38px;height:38px;margin-left:-19px;border-radius:50%;background:var(--card);border:1px solid var(--ln);box-shadow:0 6px 18px rgba(0,0,0,.2);display:flex;align-items:center;justify-content:center;z-index:9997;pointer-events:none;opacity:0;transform:translate(0,-60px)}'
++'#pr59 svg{width:20px;height:20px;fill:none;stroke:var(--ac);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}#pr59.spin svg{animation:sysp .8s linear infinite}'
+/* + gomb szétnyílik */
++'@keyframes qaexp{from{opacity:0;transform:translate(34%,70px) scale(.3);border-radius:44px}55%{opacity:1}to{opacity:1;transform:none}}@keyframes qafd{from{opacity:0}}'
++'#qa{animation:qafd .25s ease-out}#qa>div{transform-origin:calc(100% - 44px) 100%;animation:qaexp .38s cubic-bezier(.2,.9,.3,1)}'
+/* hibás mező */
++'@keyframes bad59{0%,100%{transform:none}15%{transform:translateX(-8px)}35%{transform:translateX(7px)}55%{transform:translateX(-5px)}75%{transform:translateX(3px)}}@keyframes bad59c{0%,60%{box-shadow:0 0 0 3px rgba(229,72,77,.6);border-color:#e5484d}100%{box-shadow:0 0 0 0 transparent}}'
++'.bad59{animation:bad59 .45s ease,bad59c .8s ease-out}'
+/* visszavonás csík */
++'@keyframes un59{from{transform:scaleX(1)}to{transform:scaleX(0)}}.un59{position:absolute;left:0;bottom:0;height:3px;width:100%;background:var(--ac);transform-origin:left;animation:un59 linear forwards}'
+/* PIN pontok */
++'@keyframes okp{0%{transform:scale(1)}45%{transform:scale(1.5)}100%{transform:scale(1)}}@keyframes dotsh{0%,100%{transform:none}20%{transform:translateX(-7px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}'
++'#ldots.okd i{background:#30a46c!important;border-color:#30a46c!important;animation:okp .4s ease-out both}#ldots.okd i:nth-child(2){animation-delay:.05s}#ldots.okd i:nth-child(3){animation-delay:.1s}#ldots.okd i:nth-child(4){animation-delay:.15s}#ldots.okd i:nth-child(n+5){animation-delay:.2s}'
++'#ldots.badd i{border-color:#e5484d!important;box-shadow:0 0 0 2px rgba(229,72,77,.5)}#ldots.badd{animation:dotsh .45s}'
+/* cél mérő csillanás */
++'.gl59{position:absolute;top:0;bottom:0;left:0;width:40%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.8),transparent);pointer-events:none}'
+/* logó lélegzik */
++'@keyframes lgb{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}.hlg{animation:lgp 4.2s ease-in-out infinite,lgb 5s ease-in-out infinite}.hero.syn58 .hlg{animation-duration:4.2s,1.4s}'
+/* üres állapot */
++'@keyframes emf{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}@keyframes emd{0%{stroke-dashoffset:40}35%,85%{stroke-dashoffset:0}100%{stroke-dashoffset:-40}}'
++'.empty svg{animation:emf 3.6s ease-in-out infinite}.empty svg path[d^="M21 33"]{stroke-dasharray:40;animation:emd 3.6s ease-in-out infinite}'
+/* évszakok és napszak */
++'.xhero>.sea59,.xhero>.tod59{position:absolute!important;inset:0;z-index:1;pointer-events:none;overflow:hidden}.xhero>.tod59{transition:background 60s linear}'
++'@keyframes sn59{0%{transform:translate(0,-12px)}50%{transform:translate(14px,170px)}100%{transform:translate(-10px,350px)}}'
++'.sea59.sn i{position:absolute;top:0;border-radius:50%;background:#fff;opacity:.85;animation:sn59 linear infinite}'
++'@keyframes ht59{from{transform:translateY(6px) scaleX(1);opacity:.35}to{transform:translateY(-14px) scaleX(1.06);opacity:.9}}'
++'.sea59.ht{background:radial-gradient(circle at 84% -4%,rgba(255,196,80,.55),rgba(255,150,40,.18) 38%,transparent 62%),linear-gradient(0deg,rgba(255,120,40,.16),transparent 55%)}.sea59.ht b{position:absolute;left:-10%;width:120%;height:90px;bottom:-30px;background:linear-gradient(0deg,rgba(255,170,60,.5),transparent);filter:blur(8px);animation:ht59 4.5s ease-in-out infinite alternate}'
++'@keyframes hr59{0%{transform:translate(0,0) scale(.6);opacity:0}15%{opacity:.9}100%{transform:translate(var(--sx,10px),-300px) scale(1.2);opacity:0}}.sea59.ht i{position:absolute;bottom:-8px;width:5px;height:5px;border-radius:50%;background:radial-gradient(circle,#fff6c8,rgba(255,170,60,.7) 60%,transparent 70%);animation:hr59 linear infinite}'
++'html.lp .sea59 i,html.lp .sea59 b{display:none}.rm .sea59,.rm .tod59{display:none}'
+/* eső / hó a 30 napos csíkon */
++'@keyframes rd59{to{transform:translateY(90px)}}.rd59{position:absolute;inset:0;pointer-events:none;overflow:hidden}.rd59 i{position:absolute;top:-12px;width:2px;height:8px;border-radius:2px;background:#7fb6ff;opacity:.75;animation:rd59 2s linear infinite}.rd59.sn i{width:4px;height:4px;border-radius:50%;background:#fff;animation-duration:4s}.rm .rd59{display:none}';
+document.head.appendChild(st)})();
+
+/* --- hibás mező rázása --- */
+function bad(e){if(!e||!A58.ok())return;e.classList.remove('bad59');void e.offsetWidth;e.classList.add('bad59');try{e.focus()}catch(x){}clearTimeout(e._b59);e._b59=setTimeout(function(){e.classList.remove('bad59')},900)}
+var _ad59=ad;ad=function(){var e=document.getElementById('nt');if(e&&!e.value.trim())bad(e);return _ad59.apply(this,arguments)};
+var _al59=al;al=function(k){var e=document.getElementById(k+'a');if(e&&!parseFloat(e.value))bad(e);return _al59(k)};
+var _qadd59=qadd;qadd=function(){var e=document.getElementById('qin');if(e&&!e.value.trim())bad(e);return _qadd59.apply(this,arguments)};
+var _ac59=ac;ac=function(){var e=document.getElementById('cn');if(e&&!e.value.trim())bad(e);return _ac59.apply(this,arguments)};
+var _qaSave59=qaSave;qaSave=function(){try{if(QS.k=='task'){if(!((QS.m||'').trim()||(QS.u||'').trim()))bad(document.getElementById('qam'))}else if(!parseFloat(QS.a))bad(document.getElementById('qaa'))}catch(e){}return _qaSave59.apply(this,arguments)};
+
+/* --- visszavonás: lecsúszik + fogyó csík --- */
+var _hdr59=hdr;
+hdr=function(){_hdr59.apply(this,arguments);try{undoBar()}catch(e){}};
+function undoBar(){if(!UN||!A58.ok())return;var b=document.querySelector('#hd button[onclick="undo()"]'),c=b&&b.closest('.card');if(!c||c.querySelector('.un59'))return;
+ var rem=Math.max(0,30000-(Date.now()-UN.t));c.style.position='relative';c.style.overflow='hidden';c.insertAdjacentHTML('beforeend','<i class="un59" style="animation-duration:'+rem+'ms"></i>');
+ if(A59.un!==UN.t){A59.un=UN.t;try{c.animate([{transform:'translateY(-26px)',opacity:0},{transform:'none',opacity:1}],{duration:320,easing:'cubic-bezier(.2,.9,.3,1)'})}catch(e){}}}
+
+/* --- PIN: pontok zöldre váltanak / pirosan megrázkódnak --- */
+var _lkOpen59=lkOpen;
+lkOpen=function(n){var d=document.getElementById('ldots'),l=document.getElementById('lk');
+ if(!A58.ok()||!d||!l||l.style.display!='flex'||A59.lko)return _lkOpen59(n);
+ A59.lko=1;d.classList.add('okd');hap('ok');setTimeout(function(){A59.lko=0;d.classList.remove('okd');_lkOpen59(n)},440)};
+var _lkMsg59=lkMsg;
+lkMsg=function(t){_lkMsg59(t);if(/Hibás PIN/.test(t||'')){var d=document.getElementById('ldots');if(d&&A58.ok()){d.classList.remove('badd');void d.offsetWidth;d.classList.add('badd');setTimeout(function(){d.classList.remove('badd')},700)}}};
+
+/* --- napok / hónapok közti lapozás: irányba csúszik --- */
+var _mv59=mv;mv=function(n){A59.mv=n;_mv59(n)};
+var _mo59=mo;mo=function(n){A59.mv=n;_mo59(n)};
+
+/* --- éves összesítés: gyűrű az arányról --- */
+var _vSum59=vSum;
+vSum=function(){var h=_vSum59.apply(this,arguments);
+ try{var ti=0,te=0;for(var m=0;m<12;m++){ti+=mt(sy,m);te+=mt(sy,m,'exp')}
+  if(ti>0){var pr=ti-te,pc=Math.max(0,Math.min(1,pr/ti));
+   var card='<div class="card"><h3>Éves arány</h3><div class="dr">'+ring(pc,Math.round(pc*100)+'%')+'<div class="ds"><div class="k">Nyereség az árbevételből</div><div class="v">'+ft(pr)+'</div><div class="mut" style="font-size:12px">Kiadás: '+Math.round(te/ti*100)+'% · Bevétel: '+ft(ti)+'</div></div></div></div>';
+   h=h.replace('<div class="card"><h3>Havi nyereség</h3>',card+'<div class="card"><h3>Havi nyereség</h3>')}}catch(e){}
+ return h};
+
+/* --- logó: szinkronnál gyorsabban lélegzik --- */
+var _hs59=hsync;
+hsync=function(){_hs59.apply(this,arguments);var h=document.querySelector('#hd .hero');if(h)h.classList.toggle('syn58',SYNCST=='syncing'&&navigator.onLine!==false)};
+
+/* --- évszak és napszak a fejlécben --- */
+function tod59(){var H=new Date(),h=H.getHours()+H.getMinutes()/60,K=[[0,8,14,48,.30],[5,8,14,48,.28],[6.5,255,140,70,.22],[8,255,200,120,0],[17,255,200,120,0],[18.5,255,110,70,.22],[20,10,16,52,.26],[24,8,14,48,.30]],i=0;
+ while(i<K.length-2&&h>=K[i+1][0])i++;var a=K[i],b=K[i+1],f=Math.max(0,Math.min(1,(h-a[0])/(b[0]-a[0]))),L=function(j){return a[j]+(b[j]-a[j])*f};
+ return 'rgba('+Math.round(L(1))+','+Math.round(L(2))+','+Math.round(L(3))+','+L(4).toFixed(3)+')'}
+function easter59(y){var a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451),mo=Math.floor((h+l-7*m+114)/31),da=((h+l-7*m+114)%31)+1;return new Date(y,mo-1,da)}
+function hol59(d){var y=d.getFullYear(),m=d.getMonth()+1,n=d.getDate(),E=easter59(y),df=Math.round((new Date(y,d.getMonth(),n)-E)/864e5);
+ if(df==-2)return{t:'Nagypéntek',e:'✝️',k:''};
+ if(df==0)return{t:'Húsvét',e:'🐣',k:'egg'};
+ if(df==1)return{t:'Húsvéthétfő',e:'🐣',k:'egg'};
+ if(df==49)return{t:'Pünkösd',e:'🌿',k:'petal'};
+ if(df==50)return{t:'Pünkösdhétfő',e:'🌿',k:'petal'};
+ if(m==1&&n==1)return{t:'Boldog új évet!',e:'🎆',k:'fw'};
+ if(m==3&&n==15)return{t:'Nemzeti ünnep',e:'🇭🇺',k:'nat'};
+ if(m==5&&n==1)return{t:'A munka ünnepe',e:'🌸',k:'petal'};
+ if(m==5&&d.getDay()==0&&n<=7)return{t:'Anyák napja',e:'💐',k:'petal'};
+ if(m==8&&n==20)return{t:'Szent István ünnepe',e:'🎆',k:'fw'};
+ if(m==10&&n==23)return{t:'Nemzeti ünnep',e:'🇭🇺',k:'nat'};
+ if(m==11&&n==1)return{t:'Mindenszentek',e:'🕯️',k:'candle'};
+ if(m==12&&n==6)return{t:'Mikulás',e:'🎅',k:'snow'};
+ if(m==12&&n==24)return{t:'Szenteste',e:'🎄',k:'xmas'};
+ if(m==12&&(n==25||n==26))return{t:'Karácsony',e:'🎄',k:'xmas'};
+ if(m==12&&n==31)return{t:'Szilveszter',e:'🎆',k:'fw'};
+ return null}
+function sea59(h,d){if(h.indexOf('<div class="xhero">')<0)return h;
+ var x=null,c=0,now=(d instanceof Date?d:new Date(d)),m=now.getMonth()+1,dd=now.getDate(),add='',i,R=function(k){return((k*7919)%97)/97},P=function(v){return Math.round(v)},ho=null;
+ try{x=wxCtx();c=x?x.c:0}catch(e){}
+ try{ho=hol59(d instanceof Date?d:new Date(d))}catch(e){}
+ var rainy=c>=51,snowy=(c>=71&&c<=77)||c==85||c==86;
+ var snow=function(n,gold){var s='<div class="sea59 sn" aria-hidden="true">';for(i=0;i<n;i++){var z=2+P(R(i+2)*4);s+='<i style="left:'+P(R(i+1)*100)+'%;width:'+z+'px;height:'+z+'px;animation-duration:'+(7+R(i+5)*7).toFixed(1)+'s;animation-delay:-'+(R(i+3)*12).toFixed(1)+'s"></i>'}
+  if(gold)for(i=0;i<12;i++)s+='<u class="tw" style="left:'+P(6+R(i+9)*88)+'%;top:'+P(8+R(i+4)*80)+'%;animation-delay:-'+(R(i+7)*3).toFixed(1)+'s"></u>';return s+'</div>'};
+ var fall=function(cls,n,cols,fn){var s='<div class="sea59 '+cls+'" aria-hidden="true">';for(i=0;i<n;i++)s+='<i style="left:'+P(R(i+1)*100)+'%;background:'+cols[i%cols.length]+';animation-duration:'+(8+R(i+5)*7).toFixed(1)+'s;animation-delay:-'+(R(i+3)*14).toFixed(1)+'s;'+(fn?fn(i):'')+'"></i>';return s+'</div>'};
+ var kind=ho&&ho.k||'';
+ if(kind=='fw'){add='<div class="sea59 fw" aria-hidden="true">';var C=['#ffd34d','#ff6b6b','#6bd0ff','#9dff8a','#ff9be7'];for(var b=0;b<5;b++){add+='<b style="left:'+P(12+R(b+3)*76)+'%;top:'+P(14+R(b+8)*50)+'%;--c:'+C[b%5]+';--dl:-'+(b*.9).toFixed(1)+'s">';for(i=0;i<12;i++)add+='<i style="--a:'+(i*30)+'deg"></i>';add+='</b>'}add+='</div>'}
+ else if(kind=='nat')add=fall('rb',26,['#ce2939','#ffffff','#477050'],function(i){return'width:4px;height:'+(8+i%3*3)+'px'});
+ else if(kind=='egg')add=fall('rb eg',14,['#ffb3c7','#b7e4ff','#fff2a8','#c4f0c5','#e2c6ff'],function(i){return'width:9px;height:11px'});
+ else if(kind=='petal')add=fall('rb pt',22,['#ffc2d6','#ffffff','#ffd9e6'],function(i){return'width:7px;height:7px'});
+ else if(kind=='candle'){add='<div class="sea59 cdl" aria-hidden="true">';for(i=0;i<7;i++)add+='<b style="left:'+(8+i*13)+'%;animation-delay:-'+(R(i+2)*2).toFixed(1)+'s;animation-duration:'+(1.4+R(i+5)).toFixed(1)+'s"></b>';add+='</div>'}
+ else if(kind=='xmas')add=snow(24,true);
+ else if(kind=='snow')add=snow(30,false);
+ else if(!rainy&&!snowy){
+  var wi=(m==12||(m==1&&dd<=6)),wl=(m==1&&dd>6)||m==2;
+  if(wi||wl)add=snow(wi?26:12,false);
+  else if(m>=3&&m<=5)add=fall('rb pt',18,['#ffc2d6','#ffffff','#ffd9e6'],function(i){return'width:6px;height:6px'});
+  else if(m>=9&&m<=11)add=fall('rb lf',16,['#e8742a','#c8452c','#f2b134','#b5651d'],function(i){return'width:'+(7+i%3*2)+'px;height:'+(7+i%3*2)+'px'});
+  else if((m>=6&&m<=8)&&c<=3){add='<div class="sea59 ht" aria-hidden="true">';for(i=0;i<5;i++)add+='<b style="bottom:'+(-30+i*40)+'px;animation-duration:'+(4+i*1.1).toFixed(1)+'s;animation-delay:-'+(i*1.7).toFixed(1)+'s"></b>';for(i=0;i<16;i++)add+='<i style="left:'+P(R(i+1)*100)+'%;--sx:'+P((R(i+6)-.5)*60)+'px;animation-duration:'+(5+R(i+4)*5).toFixed(1)+'s;animation-delay:-'+(R(i+2)*9).toFixed(1)+'s"></i>';add+='</div>'}}
+ add+='<b class="tod59" aria-hidden="true" style="background:'+tod59()+'"></b>';
+ if(ho)h=h.replace(/(<div class="xhd3">[^<]*<\/div>)/,'$1<div class="xhd3 hol59">'+ho.e+' '+ho.t+'</div>');
+ return h.replace('<div class="xhero">','<div class="xhero">'+add)}
+(function(){var st=document.createElement('style');st.textContent=
+'@keyframes rb59{0%{transform:translate(0,-14px) rotate(0)}50%{transform:translate(18px,170px) rotate(260deg)}100%{transform:translate(-8px,350px) rotate(540deg)}}'
++'.sea59.rb i{position:absolute;top:0;border-radius:1px;animation:rb59 linear infinite;opacity:.9}'
++'.sea59.rb.eg i{border-radius:50% 50% 50% 50%/60% 60% 40% 40%}.sea59.rb.pt i{border-radius:80% 0 80% 0;opacity:.85}.sea59.rb.lf i{border-radius:0 100% 0 100%;opacity:.9}'
++'@keyframes fw59{0%{transform:rotate(var(--a)) translateX(0) scale(1);opacity:1}70%{opacity:1}100%{transform:rotate(var(--a)) translateX(46px) scale(.3);opacity:0}}'
++'.sea59.fw b{position:absolute;width:0;height:0}.sea59.fw i{position:absolute;left:-2px;top:-2px;width:4px;height:4px;border-radius:50%;background:var(--c);box-shadow:0 0 6px var(--c);animation:fw59 2.8s ease-out infinite;animation-delay:var(--dl)}'
++'@keyframes cd59{0%,100%{transform:scale(1);opacity:.85}30%{transform:scale(1.15,1.3);opacity:1}60%{transform:scale(.92,.9);opacity:.7}}'
++'.sea59.cdl b{position:absolute;bottom:-6px;width:14px;height:34px;border-radius:50% 50% 30% 30%;background:radial-gradient(circle at 50% 70%,#fff3b0,#ffb400 45%,rgba(255,140,0,.0) 72%);filter:blur(1.5px);animation:cd59 1.8s ease-in-out infinite;transform-origin:50% 100%}'
++'@keyframes tw59{0%,100%{opacity:0;transform:scale(.4)}50%{opacity:1;transform:scale(1.2)}}'
++'.sea59 .tw{position:absolute;width:6px;height:6px;background:#ffd34d;border-radius:50%;box-shadow:0 0 8px 2px rgba(255,211,77,.8);animation:tw59 2.6s ease-in-out infinite}'
++'.xhd3.hol59{font-weight:700;margin-top:3px}'
++'html.lp .sea59 i,html.lp .sea59 u,html.lp .sea59 b{display:none}.rm .sea59{display:none}';
+document.head.appendChild(st)})();
+var _hd59=heroDay;heroDay=function(d){var h=_hd59(d);try{h=sea59(h,d)}catch(e){}return h};
+setInterval(function(){var e=document.querySelector('.xhero>.tod59');if(e)e.style.background=tod59()},60000);
+
+/* --- utófeldolgozás minden kirajzolás után --- */
+var _post59=post;
+post=function(){_post59.apply(this,arguments);try{x59()}catch(e){}};
+function x59(){var key=vkey58(),nw=key!=A59.k;A59.k=key;if(!A58.ok()){A59.mv=0;return}
+ badge59();rain59();slide59();
+ if(nw){wave59();goals59()}}
+
+function badge59(){var b=document.querySelector('#nav .bd'),n=b?(parseInt(b.textContent,10)||0):0;
+ if(A59.bn!==null&&n>A59.bn&&b&&b.animate){try{b.animate([{transform:'scale(.3)'},{transform:'scale(1.55)',offset:.4},{transform:'scale(.9)',offset:.7},{transform:'scale(1)'}],{duration:560,easing:'ease-out'});var ic=b.parentNode.querySelector('.ic');if(ic)ic.animate([{transform:'rotate(0)'},{transform:'rotate(-14deg)'},{transform:'rotate(12deg)'},{transform:'rotate(-8deg)'},{transform:'rotate(0)'}],{duration:600})}catch(e){}}
+ A59.bn=n}
+
+function slide59(){var d=A59.mv;A59.mv=0;if(!d)return;var v=document.getElementById('v');if(!v||!v.animate)return;
+ try{v.animate([{opacity:0,transform:'translateX('+(d>0?44:-44)+'px)'},{opacity:1,transform:'none'}],{duration:300,easing:'cubic-bezier(.2,.8,.3,1)'})}catch(e){}}
+
+function wave59(){var g=document.querySelector('#v .g');if(!g||!g.animate)return;var idx=0;
+ Array.prototype.forEach.call(g.children,function(c,i){if(i<7||!c.classList.contains('c'))return;var j=i-7,r=Math.floor(j/7),k=j%7,hm=c.classList.contains('hm');
+  try{c.animate([{opacity:0,transform:'scale(.6)'},{opacity:1,transform:'scale(1.1)',filter:hm?'brightness(1.45)':'none',offset:.62},{opacity:1,transform:'none',filter:'none'}],{duration:520,delay:(r+k)*55,easing:'cubic-bezier(.2,.8,.3,1)',fill:'backwards'})}catch(e){}})}
+
+function goals59(){document.querySelectorAll('#v div[style*="height:10px"][style*="overflow:hidden"]').forEach(function(c){var i=c.firstElementChild;if(!i||!i.animate)return;var w=i.style.width;if(!w)return;
+ try{i.animate([{width:'0%'},{width:w}],{duration:900,easing:'cubic-bezier(.2,.8,.3,1)',fill:'backwards'});
+  if(w=='100%'&&!/d33/i.test(i.getAttribute('style')||'')){c.style.position='relative';var g=document.createElement('i');g.className='gl59';c.appendChild(g);g.animate([{transform:'translateX(-120%)'},{transform:'translateX(330%)'}],{duration:900,delay:900,easing:'ease-in-out',fill:'backwards'}).onfinish=function(){g.remove()}}}catch(e){}})}
+
+function rain59(){document.querySelectorAll('#v .wx30 button').forEach(function(b){if(b.querySelector('.rd59'))return;var m=/cur='(\d{4}-\d\d-\d\d)'/.exec(b.getAttribute('onclick')||'');if(!m)return;var w=null;try{w=wxAny(m[1])}catch(e){}if(!w)return;
+ var c=w.c,rn=(c>=51&&c<=67)||(c>=80&&c<=82)||c>=95,sn=(c>=71&&c<=77)||c==85||c==86;if(!rn&&!sn)return;
+ b.style.position='relative';b.style.overflow='hidden';var h='<span class="rd59'+(sn?' sn':'')+'" aria-hidden="true">';for(var i=0;i<5;i++)h+='<i style="left:'+(10+i*18)+'%;animation-delay:-'+(i*.5).toFixed(1)+'s;animation-duration:'+(sn?4+i*.4:1.8+i*.25).toFixed(2)+'s"></i>';b.insertAdjacentHTML('beforeend',h+'</span>')})}
+
+/* --- lenyíló csoportok: simán nyílnak és záródnak --- */
+document.addEventListener('click',function(ev){
+ var s=ev.target&&ev.target.closest&&ev.target.closest('summary');if(!s)return;var d=s.parentNode;if(!d||d.tagName!='DETAILS'||!A58.ok()||!d.animate||A59.det)return;
+ ev.preventDefault();A59.det=1;var sh=s.offsetHeight,opening=!d.open,done=0;
+ var fin=function(){if(done)return;done=1;A59.det=0;d.style.overflow='';d.style.height='';if(!opening)d.open=false};
+ d.style.overflow='hidden';
+ if(opening){d.open=true;var eh=d.scrollHeight;d.style.height=eh+'px';try{d.animate([{height:sh+'px'},{height:eh+'px'}],{duration:260,easing:'cubic-bezier(.2,.8,.3,1)'}).onfinish=fin}catch(e){fin()}}
+ else{var h0=d.offsetHeight;d.style.height=sh+'px';try{d.animate([{height:h0+'px'},{height:sh+'px'}],{duration:220,easing:'cubic-bezier(.4,0,.2,1)'}).onfinish=fin}catch(e){fin()}}
+ setTimeout(fin,600)},true);
+
+/* --- + gomb: nyomás visszajelzés --- */
+(function(){var f=document.getElementById('fab');if(f)f.addEventListener('click',function(){hap('tap')})})();
+
+/* --- húzásra frissítés --- */
+(function(){var y0=0,x0=0,pull=0,on=false,el=null;
+ function ind(){if(!el){el=document.createElement('div');el.id='pr59';el.setAttribute('aria-hidden','true');el.innerHTML='<svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.4-5.7"/><path d="M20 4v4.5h-4.5"/></svg>';document.body.appendChild(el)}return el}
+ function blocked(){return['qa','lk','mo','qt'].some(function(i){var e=document.getElementById(i);return e&&e.style.display&&e.style.display!='none'})}
+ function top(){return(window.scrollY||document.documentElement.scrollTop||0)<=0}
+ document.addEventListener('touchstart',function(e){on=false;pull=0;if(!A58.ok()||blocked()||!top()||e.touches.length!=1)return;var t=e.touches[0];y0=t.clientY;x0=t.clientX;on=true},{passive:true});
+ document.addEventListener('touchmove',function(e){if(!on)return;var t=e.touches[0],dy=t.clientY-y0,dx=t.clientX-x0;if(dy<=0&&pull==0){if(dy<-8)on=false;return}if(Math.abs(dx)>Math.abs(dy)&&pull==0){on=false;return}if(!top()&&pull==0){on=false;return}
+  pull=Math.max(0,Math.min(110,dy*.5));var i=ind();i.style.transition='none';i.style.opacity=Math.min(1,pull/45);i.style.transform='translate(0,'+(pull-34)+'px) rotate('+(pull*4)+'deg)';i.classList.remove('spin')},{passive:true});
+ document.addEventListener('touchend',function(){if(!on)return;on=false;var i=el;if(!i||!pull)return;i.style.transition='transform .3s ease,opacity .3s ease';
+  if(pull>=55){i.classList.add('spin');i.style.transform='translate(0,34px)';i.style.opacity=1;hap('ok');try{if(A.rt&&typeof sync==='function')sync();else render()}catch(e){}
+   setTimeout(function(){i.style.opacity=0;i.style.transform='translate(0,-60px)';setTimeout(function(){i.classList.remove('spin')},320)},1100)}
+  else{i.style.opacity=0;i.style.transform='translate(0,-60px)'}pull=0},{passive:true});
+ window.__pr59=function(){return el}})();
+
+/* ===== v60: takarékos hatások, napváltás ujjmozdulattal, élő számváltás ===== */
+var A60={k:'',arr:null};
+(function(){var st=document.createElement('style');st.textContent=
+'html.eco .wxl i,html.eco .wxl b,html.eco .wxl .wnd,html.eco .sea59,html.eco .rd59{display:none!important}html.eco .wxsv *,html.eco .xhero::before,html.eco .xhero::after{animation:none!important}';
+document.head.appendChild(st)})();
+
+/* --- Látványos hatások: Be / Takarékos (a mozgások maradnak, a részecskék és évszakhatások nem) --- */
+A58.lp=function(){var c=document.documentElement.classList;return c.contains('lp')||c.contains('eco')};
+var _ap60=ap;ap=function(){_ap60.apply(this,arguments);document.documentElement.classList.toggle('eco',!!TH.fx)};
+try{ap()}catch(e){}
+var _cf60=confetti;confetti=function(){if(A58.lp())return;return _cf60.apply(this,arguments)};
+
+/* --- napváltás ujjmozdulattal: balra = következő nap, jobbra = előző --- */
+(function(){var x0=0,y0=0,t0=0,on=false;
+ function skip(t){for(var e=t;e&&e!==document.body;e=e.parentNode){if(!e.tagName)continue;var n=e.tagName;if(n=='INPUT'||n=='TEXTAREA'||n=='SELECT'||n=='BUTTON'&&e.classList.contains('xhn'))return true;if(e.classList&&(e.classList.contains('t')||e.classList.contains('wx30')||e.classList.contains('xwds')))return true;if(e.scrollWidth>e.clientWidth+4&&/(auto|scroll)/.test(getComputedStyle(e).overflowX))return true}return false}
+ function blocked(){return['qa','lk','mo','qt'].some(function(i){var e=document.getElementById(i);return e&&e.style.display&&e.style.display!='none'})}
+ document.addEventListener('touchstart',function(e){on=false;if(view!='day'&&view!='month')return;if(e.touches.length!=1||blocked())return;var t=e.touches[0];if(t.clientX<24||t.clientX>innerWidth-24)return;if(skip(e.target))return;x0=t.clientX;y0=t.clientY;t0=Date.now();on=true},{passive:true});
+ document.addEventListener('touchend',function(e){if(!on)return;on=false;var t=e.changedTouches[0],dx=t.clientX-x0,dy=t.clientY-y0;if(Date.now()-t0>700||Math.abs(dx)<70||Math.abs(dx)<Math.abs(dy)*2)return;
+  var d=dx<0?1:-1;try{hap('tap');if(view=='day')mv(d);else mo(d)}catch(x){}},{passive:true})})();
+
+/* --- élő számváltás: ha egy összeg megváltozik, nem ugrik, hanem átfut az új értékre --- */
+var _post60=post;
+post=function(){_post60.apply(this,arguments);try{x60()}catch(e){}};
+function x60(){var key=vkey58(),nw=key!=A60.k;A60.k=key;
+ var els=Array.prototype.slice.call(document.querySelectorAll('#v .cn')),arr=els.map(function(e){return+e.dataset.v});
+ var prev=A60.arr;A60.arr=arr;
+ if(nw||!prev||prev.length!=arr.length||!A58.ok())return;
+ els.forEach(function(e,i){var a=prev[i],b=arr[i];if(a===b||!isFinite(a)||!isFinite(b))return;var txt=e.textContent;if(!/\d/.test(txt))return;var t0=performance.now();
+  (function(e,a,b,txt,t0){function s(t){if(!e.isConnected)return;var p=Math.min(1,(t-t0)/650),q=1-Math.pow(1-p,3);e.textContent=p<1?ft(a+(b-a)*q):txt;if(p<1)requestAnimationFrame(s)}requestAnimationFrame(s)})(e,a,b,txt,t0)})}
+
+/* ===== v61: kategória-szűrő (éves nézet) és heti összefoglaló (nap nézet) ===== */
+var F61={t:'inc',c:'',m:''};
+function f61(k,v){F61[k]=v;if(k=='t')F61.c='';render()}
+function l61(){var out=[],pre=sy+'-'+(F61.m!==''?p(+F61.m+1)+'-':'');Object.keys(D).sort().forEach(function(k){if(!/^\d{4}-/.test(k)||k.indexOf(pre)!=0)return;fx(D[k])[F61.t].forEach(function(e){out.push({k:k,e:e})})});return out}
+function c61(){var all=l61(),o={};all.forEach(function(r){var c=r.e.c||'Egyéb';o[c]=(o[c]||0)+(r.e.a||0)});return o}
+function card61(){
+ var cs=c61(),names=Object.keys(cs).sort(function(a,b){return cs[b]-cs[a]}),rows=l61().filter(function(r){return !F61.c||(r.e.c||'Egyéb')==F61.c}),tot=rows.reduce(function(a,r){return a+(r.e.a||0)},0);
+ var sg=function(v,l){return '<button class="sm" style="'+(F61.t==v?'background:var(--ac);color:#fff;border-color:var(--ac)':'')+'" onclick="f61(\'t\',\''+v+'\')">'+l+'</button>'};
+ var ch=function(v,l){return '<span class="sm" data-c61="'+esc(v)+'" style="padding:4px 10px;cursor:pointer;'+(F61.c==v?'background:var(--ac);color:#fff;border-color:var(--ac)':'')+'" onclick="f61(\'c\',this.dataset.c61)">'+esc(l)+'</span>'};
+ var ms='<select onchange="f61(\'m\',this.value)" style="padding:6px;border:1px solid var(--ln);border-radius:8px;background:var(--card);color:var(--tx);font:inherit"><option value="">Egész év</option>'+MN.map(function(n,i){return '<option value="'+i+'"'+(String(F61.m)===String(i)?' selected':'')+'>'+n+'</option>'}).join('')+'</select>';
+ var list=rows.slice().sort(function(a,b){return a.k<b.k?1:-1}).slice(0,60).map(function(r){return '<div class="t" onclick="jd2(\''+r.k+'\')" style="cursor:pointer"><span>'+esc((r.e.c?r.e.c+' · ':'')+(r.e.m||''))+'<div class="mut" style="font-size:12px">'+fd(r.k)+'</div></span><strong>'+ft(r.e.a)+'</strong></div>'}).join('');
+ var op=F61.o;if(!op)return '<div class="card" onclick="F61.o=1;render()" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center"><h3 style="margin:0">Tételek szűrése</h3><span class="mut">▾ Megnyitás</span></div>';
+ return '<div class="card"><h3 onclick="F61.o=0;render()" style="cursor:pointer;display:flex;justify-content:space-between">Tételek szűrése<span class="mut">▴ Bezárás</span></h3><div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">'+sg('inc','Bevétel')+sg('exp','Kiadás')+ms+'</div>'
+ +'<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px">'+ch('','Mind')+names.map(function(c){return ch(c,c+' · '+ft(cs[c]))}).join('')+'</div>'
+ +'<div class="mut" style="margin-top:10px">'+rows.length+' tétel összesen</div><div class="big">'+ft(tot)+'</div>'+(list||'<p class="mut">Nincs ilyen tétel.</p>')+(rows.length>60?'<div class="mut">Az első 60 látszik, szűkíts tovább.</div>':'')+'</div>'}
+var _vs61=vSum;vSum=function(){var h=_vs61.apply(this,arguments);try{var m='<div class="card"><h3>Éves összesítés</h3>',i=h.indexOf(m);h=i>=0?h.slice(0,i)+card61()+h.slice(i):h+card61()}catch(e){}return h};
+function wk61(){var d=dt(cur),off=(d.getDay()+6)%7;d.setDate(d.getDate()-off);var days=[];for(var i=0;i<7;i++){days.push(ks(d));d.setDate(d.getDate()+1)}return days}
+function sum61(days){var r={i:0,e:0,t:0,d:0,b:0,bk:''};days.forEach(function(k){var x=D[k]?fx(D[k]):{inc:[],exp:[],t:[]},i=ds(x),e=sm(x.exp);r.i+=i;r.e+=e;r.t+=x.t.length;r.d+=x.t.filter(function(t){return t.d}).length;if(i>r.b){r.b=i;r.bk=k}});return r}
+function wcard61(){var days=wk61(),a=sum61(days),pv=days.map(function(k){var d=dt(k);d.setDate(d.getDate()-7);return ks(d)}),b=sum61(pv),dn=['H','K','Sze','Cs','P','Szo','V'];
+ var mx=1;days.forEach(function(k){var v=D[k]?ds(fx(D[k])):0;if(v>mx)mx=v});
+ var cmpf=function(x,y){if(!y)return '';var df=x-y;return '<span class="mut" style="font-size:12px"> '+(df>=0?'▲ ':'▼ ')+ft(Math.abs(df))+'</span>'};
+ var bars='<div style="display:flex;gap:6px;align-items:flex-end;height:54px;margin-top:10px">'+days.map(function(k,i){var v=D[k]?ds(fx(D[k])):0;return '<div style="flex:1;text-align:center;cursor:pointer" onclick="jd2(\''+k+'\')"><div style="height:'+Math.max(3,Math.round(v/mx*40))+'px;background:var(--ac);opacity:'+(k==cur?1:.55)+';border-radius:4px"></div><div class="mut" style="font-size:11px;margin-top:2px">'+dn[i]+'</div></div>'}).join('')+'</div>';
+ return '<div class="card"><h3>Heti összefoglaló</h3><div class="mut">'+fd(days[0])+' – '+fd(days[6])+'</div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px"><div><div class="mut" style="font-size:12px">Bevétel</div><div class="big" style="font-size:17px">'+ft(a.i)+'</div>'+cmpf(a.i,b.i)+'</div><div><div class="mut" style="font-size:12px">Kiadás</div><div class="big" style="font-size:17px">'+ft(a.e)+'</div>'+cmpf(a.e,b.e)+'</div><div><div class="mut" style="font-size:12px">Nyereség</div><div class="big" style="font-size:17px;color:var(--ac)">'+ft(a.i-a.e)+'</div></div></div>'+bars
+ +'<div class="mut" style="margin-top:8px">Teendők: '+a.d+' / '+a.t+' kész'+(a.b?' · Legjobb nap: '+fd(a.bk)+' ('+ft(a.b)+')':'')+'</div><div class="mut" style="font-size:12px">A nyilak az előző héthez viszonyítanak.</div></div>'}
+var _vd61=vDay;vDay=function(){var h=_vd61.apply(this,arguments);try{if(!hid('w')){var m='<div class="card"><h3>Teendők</h3>',i=h.indexOf(m);h=i>=0?h.slice(0,i)+wcard61()+h.slice(i):h+wcard61()}}catch(e){}return h};
 </script></body></html>
