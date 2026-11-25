@@ -564,7 +564,7 @@ function bkOld(){var b=localStorage.getItem('hn_bk');return!b||(new Date(today)-
 function bf(){var f=new File([JSON.stringify({v:1,t:new Date().toISOString(),d:D})],'naplo-mentes-'+today+'.json',{type:'application/json'});try{localStorage.setItem('hn_bk',today)}catch(e){}
  if(fsave(f)){}else if(navigator.canShare&&navigator.canShare({files:[f]}))navigator.share({files:[f]}).catch(function(){});else{var a=document.createElement('a');a.href=URL.createObjectURL(f);a.download=f.name;a.click()}render()}
 function rf(inp){var f=inp.files[0];if(!f)return;var r=new FileReader();r.onload=function(){var msg;try{var o=JSON.parse(r.result),d=o.d||o,n=0,t=Date.now();for(var k in d){if(!d[k]||typeof d[k]!='object')continue;var l=D[k];if(!l||(d[k].u||0)>(l.u||0)){D[k]=d[k];D[k].u=D[k].u||t;dirty[k]=1;n++}}save();sched();msg=n+' nap/tétel betöltve a fájlból.'}catch(e){msg='Hibás mentésfájl.'}render();var b=document.getElementById('bk');if(b)b.value=msg};r.readAsText(f)}
-var VER='v64',UPD=false;try{var pv=localStorage.getItem('hn_v');if(pv&&pv!=VER)UPD=true;localStorage.setItem('hn_v',VER)}catch(e){}
+var VER='v66',UPD=false;try{var pv=localStorage.getItem('hn_v');if(pv&&pv!=VER)UPD=true;localStorage.setItem('hn_v',VER)}catch(e){}
 function cvt(v){return '<div style="display:flex;gap:6px;margin-bottom:10px">'+[['week','Hét'],['month','Hónap']].map(function(t){return '<button class="sm" style="flex:1;'+(v==t[0]?'background:var(--ac);color:#fff;border-color:var(--ac)':'')+'" onclick="go(\''+t[0]+'\')">'+t[1]+'</button>'}).join('')+'</div>'}
 var jid='',jstt='';
 function JL(){return(D['0-munka']&&D['0-munka'].p)||[]}
@@ -1600,4 +1600,80 @@ function wcard61(){var days=wk61(),a=sum61(days),pv=days.map(function(k){var d=d
  return '<div class="card"><h3>Heti összefoglaló</h3><div class="mut">'+fd(days[0])+' – '+fd(days[6])+'</div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px"><div><div class="mut" style="font-size:12px">Bevétel</div><div class="big" style="font-size:17px">'+ft(a.i)+'</div>'+cmpf(a.i,b.i)+'</div><div><div class="mut" style="font-size:12px">Kiadás</div><div class="big" style="font-size:17px">'+ft(a.e)+'</div>'+cmpf(a.e,b.e)+'</div><div><div class="mut" style="font-size:12px">Nyereség</div><div class="big" style="font-size:17px;color:var(--ac)">'+ft(a.i-a.e)+'</div></div></div>'+bars
  +'<div class="mut" style="margin-top:8px">Teendők: '+a.d+' / '+a.t+' kész'+(a.b?' · Legjobb nap: '+fd(a.bk)+' ('+ft(a.b)+')':'')+'</div><div class="mut" style="font-size:12px">A nyilak az előző héthez viszonyítanak.</div></div>'}
 var _vd61=vDay;vDay=function(){var h=_vd61.apply(this,arguments);try{if(!hid('w')){var m='<div class="card"><h3>Teendők</h3>',i=h.indexOf(m);h=i>=0?h.slice(0,i)+wcard61()+h.slice(i):h+wcard61()}}catch(e){}return h};
+
+/* ===== v65: Face ID, gyors bevitel mondatból, félretétel, munka-nyereség, hívás gomb ===== */
+var bioBusy=0,bioPend=null;
+function bioNat(){return !!(window.webkit&&window.webkit.messageHandlers&&window.webkit.messageHandlers.bio)}
+window.bio65cb=function(ok){var f=bioPend;bioPend=null;if(f)f(!!ok)};
+function b64u(b){var s='';new Uint8Array(b).forEach(function(c){s+=String.fromCharCode(c)});return btoa(s)}
+function ub64(s){var t=atob(s),a=new Uint8Array(t.length);for(var i=0;i<t.length;i++)a[i]=t.charCodeAt(i);return a}
+function bioOk(){return bioNat()||!!(window.PublicKeyCredential&&navigator.credentials&&navigator.credentials.create&&window.isSecureContext)}
+function bioOn(){try{return!!localStorage.getItem('hn_bio')}catch(e){return false}}
+async function bioReg(){
+ if(!localStorage.getItem('hn_pin')){toast('Előbb állíts be PIN-t');return}
+ if(bioNat()){bioPend=function(ok){if(ok){localStorage.setItem('hn_bio','native');toast('Face ID / Touch ID bekapcsolva');render()}else toast('Nem sikerült bekapcsolni')};window.webkit.messageHandlers.bio.postMessage('reg');return}
+ try{var c=await navigator.credentials.create({publicKey:{challenge:crypto.getRandomValues(new Uint8Array(32)),rp:{name:'4GoTherm Napló'},user:{id:crypto.getRandomValues(new Uint8Array(16)),name:'naplo',displayName:'4GoTherm Napló'},pubKeyCredParams:[{type:'public-key',alg:-7},{type:'public-key',alg:-257}],authenticatorSelection:{authenticatorAttachment:'platform',userVerification:'required',residentKey:'discouraged'},timeout:60000,attestation:'none'}});
+  localStorage.setItem('hn_bio',b64u(c.rawId));toast('Face ID / Touch ID bekapcsolva');render()}catch(e){toast('Nem sikerült bekapcsolni')}}
+function bioOff(){localStorage.removeItem('hn_bio');render()}
+async function bioGo(){if(!bioOn()||bioBusy)return;if(bioNat()){bioBusy=1;bioPend=function(ok){bioBusy=0;if(ok)lkOpen(lkLen())};window.webkit.messageHandlers.bio.postMessage('go');return}bioBusy=1;
+ try{var a=await navigator.credentials.get({publicKey:{challenge:crypto.getRandomValues(new Uint8Array(32)),allowCredentials:[{type:'public-key',id:ub64(localStorage.getItem('hn_bio')),transports:['internal']}],userVerification:'required',timeout:60000}});if(a)lkOpen(lkLen())}catch(e){}
+ bioBusy=0}
+var _lkI65=lkInit;lkInit=function(){_lkI65.apply(this,arguments);try{var c=document.querySelector('#lk .lkc'),o=document.getElementById('bio65');if(o&&!(bioOn()&&bioOk()))o.remove();else if(c&&!o&&bioOn()&&bioOk()){var b=document.createElement('button');b.id='bio65';b.textContent='Face ID / Touch ID';b.style.cssText='margin-top:14px;padding:10px 18px;border-radius:12px;border:1px solid rgba(255,255,255,.4);background:transparent;color:#fff;font:inherit';b.onclick=bioGo;c.appendChild(b)}}catch(e){}};
+var _lk65=lock;lock=function(){_lk65.apply(this,arguments);try{if(bioOn()&&bioOk()&&document.getElementById('lk').style.display=='flex')setTimeout(bioGo,400)}catch(e){}};
+var _vp65=vPin;vPin=function(){var h=_vp65.apply(this,arguments);try{if(localStorage.getItem('hn_pin')&&bioOk()){var x='<div style="margin-top:12px">'+(bioOn()?'<span class="mut">Face ID / Touch ID: be van kapcsolva</span> <button class="sm" onclick="bioOff()">Kikapcsolás</button>':'<button class="sm" onclick="bioReg()">Face ID / Touch ID bekapcsolása</button>')+'<p class="mut">A PIN marad tartaléknak. Csak ezen az eszközön érvényes.</p></div>';h=h.replace(/<\/div>$/,x+'</div>')}}catch(e){}return h};
+var _op65=offPin;offPin=async function(){await _op65.apply(this,arguments);if(!localStorage.getItem('hn_pin'))localStorage.removeItem('hn_bio')};
+
+/* --- gyors bevitel egy mondatból --- */
+function addd65(n){var d=new Date(today+'T12:00:00');d.setDate(d.getDate()+n);return ks(d)}
+function re65(t){return t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}
+function parse61(src){
+ var t=' '+String(src||'').toLowerCase().replace(/\s+/g,' ').trim()+' ',o={k:'inc',a:'',m:'',c:'',d:'',u:'',np:0},m,dk='';
+ var MO=['jan','feb','már','ápr','máj','jún','júl','aug','szep','okt','nov','dec'],WD=['vasárnap','hétfő','kedd','szerda','csütörtök','péntek','szombat'];
+ if(m=t.match(/(\d{4})[-.\/ ](\d{1,2})[-.\/ ](\d{1,2})\.?(?= |$)/)){dk=m[1]+'-'+p(+m[2])+'-'+p(+m[3]);t=t.replace(m[0],' ')}
+ else if(t.indexOf(' tegnapelőtt ')>=0){dk=addd65(-2);t=t.replace(' tegnapelőtt ',' ')}
+ else if(t.indexOf(' tegnap ')>=0){dk=addd65(-1);t=t.replace(' tegnap ',' ')}
+ else if(t.indexOf(' holnap ')>=0){dk=addd65(1);t=t.replace(' holnap ',' ')}
+ else if(t.indexOf(' ma ')>=0){dk=today;t=t.replace(' ma ',' ')}
+ else if(m=t.match(/ (jan|feb|már|ápr|máj|jún|júl|aug|szep|okt|nov|dec)[a-záéíóöőúüű]*\.? (\d{1,2})(?![\d])\.?/)){var mi=MO.indexOf(m[1]),yy=+today.slice(0,4);dk=yy+'-'+p(mi+1)+'-'+p(+m[2]);t=t.replace(m[0],' ')}
+ else if(m=t.match(/ (\d{1,2})\.(\d{1,2})\. /)){if(+m[1]<=12&&+m[2]<=31){dk=today.slice(0,4)+'-'+p(+m[1])+'-'+p(+m[2]);t=t.replace(m[0],' ')}}
+ else if(m=t.match(/ (?:múlt )?(hétfő|kedd|szerda|csütörtök|péntek|szombat|vasárnap)[a-záéíóöőúüű]*/)){var wi=WD.indexOf(m[1]),cd=new Date(today+'T12:00:00'),df=(cd.getDay()-wi+7)%7;dk=addd65(-df);t=t.replace(m[0],' ')}
+ o.d=dk;
+ var re=/(\d+)[,.](\d{1,2})\s*(millió|millio|ezer|k)(?![a-záéíóöőúüű0-9])|(\d{1,3}(?:[ .]\d{3})+|\d+)\s*(millió|millio|ezer|e|k)?\s*(ft|forint)?(?![a-záéíóöőúüű0-9])/g,C=[],v,u,hf;
+ while(m=re.exec(t)){if(m[1]){v=parseFloat(m[1]+'.'+m[2]);u=m[3];hf=1}else{v=parseFloat(m[4].replace(/[ .]/g,''));u=m[5];hf=!!(u||m[6])}
+  if(u)v*=/^mill/.test(u)?1e6:1e3;C.push({v:v,t:m[0],p:hf?1:0})}
+ if(C.length){C.sort(function(a,b){return b.p-a.p||b.v-a.v});o.a=C[0].v;t=t.replace(C[0].t,' ')}
+ var has=function(L){return L.some(function(w){return t.indexOf(w)>=0})};
+ if(/ (teendő|emlékeztess|hívd|hívni)/.test(t))o.k='task';
+ else if(t.indexOf('bevétel')<0&&has(['kiadás','kiadtam','vettem','vásárol','vásárl','költség','költött','fizettem','benzin','üzemanyag','tankol']))o.k='exp';
+ if(o.k=='inc'&&has(['nem fizette','nem fizetett','tartozik','kintlév','még nem']))o.np=1;
+ var best=null,bl=0;CL().forEach(function(c){var n=(c.n||'').toLowerCase().trim();if(!n)return;if(t.indexOf(n)>=0&&n.length>bl){best=c;bl=n.length}});
+ var rm='';
+ if(best)rm=best.n.toLowerCase();
+ else{var cand=[];CL().forEach(function(c){String(c.n||'').toLowerCase().split(/\s+/).forEach(function(tk){if(tk.length>=3&&new RegExp(' '+re65(tk)+'[a-záéíóöőúüű]*(?= |$|[,.])').test(t))cand.push({c:c,tk:tk})})});
+  if(cand.length&&cand.every(function(x){return x.c===cand[0].c})){best=cand[0].c;var mm=t.match(new RegExp(' '+re65(cand[0].tk)+'[a-záéíóöőúüű]*(?= |$|[,.])'));rm=mm?mm[0].trim():''}}
+ if(best){o.u=best.n;if(rm)t=t.replace(rm,' ');String(best.n).toLowerCase().split(/\s+/).forEach(function(tk){if(tk.length>=3)t=t.replace(new RegExp(' '+re65(tk)+'[a-záéíóöőúüű]*(?= |$|[,.])'),' ')})}
+ var bc=null,bs=0;cats().forEach(function(c){var st=c.toLowerCase().replace(/[aeiouáéíóöőúüű]+$/,'');if(st.length>=3&&st.length>bs&&t.indexOf(st)>=0){bc=c;bs=st.length}});if(bc)o.c=bc;
+ t=t.replace(/ (hívd|hívni)/,' hívás ');['forint',' ft ','bevétel','kiadás','kaptam','vettem','kifizette','nem fizetett','nem fizette','még nem','fizetett','fizette','tartozik','teendő','emlékeztess'].forEach(function(w){t=t.split(w).join(' ')});
+ t=t.replace(/[,;:]+/g,' ').replace(/\s+/g,' ').trim();o.m=t?t.charAt(0).toUpperCase()+t.slice(1):'';return o}
+function nl65(){var el=document.getElementById('nl65'),v=el&&el.value.trim();if(!v)return;var o=parse61(v);QS.k=o.k;if(o.a)QS.a=String(Math.round(o.a));QS.m=o.m;if(o.c)QS.c=o.c;QS.d=o.d||today;QS.u=o.u||'';QS.np=o.np;qaDraw();toast((o.k=='task'?'Teendő':o.k=='exp'?'Kiadás':'Bevétel')+(o.a?' · '+ft(o.a):'')+(o.u?' · '+o.u:'')+' – nézd át és mentsd')}
+var _qd65=qaDraw;qaDraw=function(){_qd65.apply(this,arguments);var b=document.getElementById('qab');if(b&&!document.getElementById('nl65'))b.insertAdjacentHTML('afterbegin','<div style="display:flex;gap:6px;margin-bottom:10px"><input id="nl65" type="text" placeholder="Egy mondatban: Kovács 45 ezer klíma tegnap" style="flex:1" onkeydown="if(event.key===\'Enter\'){event.preventDefault();nl65()}"><button class="sm" onclick="nl65()">Kitölt</button></div>')};
+
+/* --- félretétel és munka/ügyfél nyereség az éves nézetben --- */
+var F65={g:'job'};
+function g65(v){F65.g=v;render()}
+function rs65(pre){var i=0,e=0;for(var k in D)if(k.indexOf(pre)==0&&/^\d{4}-/.test(k)){var x=fx(D[k]);i+=ds(x);e+=sm(x.exp)}return TH.rb?Math.max(0,i-e):i}
+function rcard65(){var pc=+(TH.rs||0),nw=new Date(),mp=sy+'-'+p(nw.getMonth()+1)+'-',S='padding:6px;border:1px solid var(--ln);border-radius:8px;background:var(--card);color:var(--tx);font:inherit';
+ return '<div class="card"><h3>Mennyit tegyek félre?</h3><div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><input type="number" inputmode="decimal" min="0" max="90" value="'+(pc||'')+'" placeholder="%" style="width:70px;'+S+'" onchange="TH.rs=Math.max(0,Math.min(90,+this.value||0));thsave();render()"><span class="mut">%-át a</span><select style="'+S+'" onchange="TH.rb=+this.value;thsave();render()"><option value="0"'+(TH.rb?'':' selected')+'>bevételből</option><option value="1"'+(TH.rb?' selected':'')+'>nyereségből</option></select></div>'
+ +(pc?'<div class="mut" style="margin-top:10px">'+sy+' egész évre</div><div class="big">'+ft(rs65(sy+'-')*pc/100)+'</div>'+(sy==nw.getFullYear()?'<div class="mut" style="margin-top:6px">Ebben a hónapban eddig: <b>'+ft(rs65(mp)*pc/100)+'</b></div>':''):'<p class="mut">Adj meg egy százalékot (pl. adóra, járulékra, tartalékra), és minden hónapban kiszámolom, mennyit érdemes félretenni. Ez csak becslés, nem adószámítás.</p>')+'</div>'}
+function pcard65(){var pre=sy+'-',J={},A={};JL().forEach(function(j){J[j.id]=j});
+ for(var k in D){if(k.indexOf(pre)!=0)continue;var x=fx(D[k]);['inc','exp'].forEach(function(t){x[t].forEach(function(e){var j=e.j&&J[e.j];if(!j)return;var key=F65.g=='cust'?(j.c||'Ismeretlen ügyfél'):(j.n||'Munka'),r=A[key]=A[key]||{i:0,e:0};if(t=='inc')r.i+=e.a||0;else r.e+=e.a||0})})}
+ var nm=Object.keys(A).sort(function(a,b){return(A[b].i-A[b].e)-(A[a].i-A[a].e)}),mx=Math.max.apply(null,nm.map(function(n){return Math.abs(A[n].i-A[n].e)}).concat([1])),
+ sg=function(v,l){return '<button class="sm" style="'+(F65.g==v?'background:var(--ac);color:#fff;border-color:var(--ac)':'')+'" onclick="g65(\''+v+'\')">'+l+'</button>'};
+ return '<div class="card"><h3>Mi hozza a legtöbbet? ('+sy+')</h3><div style="display:flex;gap:6px;margin-bottom:8px">'+sg('job','Munkák')+sg('cust','Ügyfelek')+'</div>'
+ +(nm.slice(0,8).map(function(n){var r=A[n],pf=r.i-r.e;return '<div class="row" style="flex-wrap:wrap"><span class="l" style="width:96px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(n)+'</span><div class="b" style="width:'+Math.round(Math.abs(pf)/mx*40)+'%;'+(pf<0?'background:#e5484d':'')+'"></div><span class="v">'+ft(pf)+'</span><div class="mut" style="width:100%;font-size:11px">bevétel '+ft(r.i)+' · kiadás '+ft(r.e)+(r.i>0?' · haszon '+Math.round(pf/r.i*100)+'%':'')+'</div></div>'}).join('')||'<p class="mut">Még nincs munkához kötött tétel. Bevételnél és kiadásnál válaszd ki a munkát, és itt összeáll.</p>')+'</div>'}
+var _vs65=vSum;vSum=function(){var h=_vs65.apply(this,arguments);try{var m='<div class="card"><h3>Havi nyereség</h3>',i=h.indexOf(m),x=rcard65()+pcard65();h=i>=0?h.slice(0,i)+x+h.slice(i):h+x}catch(e){}return h};
+var _vm65m=vMonth;vMonth=function(){var h=_vm65m.apply(this,arguments);try{var pc=+(TH.rs||0);if(pc)h=h.replace(/(Nyereség: <b>[^<]*<\/b><\/div>)/,'$1<div style="margin-top:6px">Félretéve '+pc+'%: <b>'+ft(rs65(my+'-'+p(mm+1)+'-')*pc/100)+'</b></div>')}catch(e){}return h};
+
+/* --- karbantartás: hívás gomb --- */
+var _vmt65=vMaint;vMaint=function(){var h=_vmt65.apply(this,arguments);try{DV().forEach(function(e){var c=CL().filter(function(c){return c.id==e.cu})[0],ph=c&&String(c.ph||'').replace(/[^\d+]/g,'');if(!ph)return;var m='<button class="sm" onclick="mnt(\''+e.id+'\')">';h=h.replace(m,'<a class="sm" href="tel:'+ph+'" style="text-decoration:none;display:inline-block">📞 Hívás</a> '+m)})}catch(x){}return h};
 </script></body></html>
