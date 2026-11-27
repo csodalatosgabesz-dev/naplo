@@ -565,7 +565,7 @@ function bkOld(){var b=localStorage.getItem('hn_bk');return!b||(new Date(today)-
 function bf(){var f=new File([JSON.stringify({v:1,t:new Date().toISOString(),d:PM?REAL:D})],'naplo-mentes-'+today+'.json',{type:'application/json'});try{localStorage.setItem('hn_bk',today)}catch(e){}
  if(fsave(f)){}else if(navigator.canShare&&navigator.canShare({files:[f]}))navigator.share({files:[f]}).catch(function(){});else{var a=document.createElement('a');a.href=URL.createObjectURL(f);a.download=f.name;a.click()}render()}
 function rf(inp){var f=inp.files[0];if(!f)return;var r=new FileReader();r.onload=function(){var msg;try{var o=JSON.parse(r.result),d=o.d||o,n=0,t=Date.now();for(var k in d){if(!d[k]||typeof d[k]!='object')continue;var l=D[k];if(!l||(d[k].u||0)>(l.u||0)){D[k]=d[k];D[k].u=D[k].u||t;dirty[k]=1;n++}}save();sched();msg=n+' nap/tétel betöltve a fájlból.'}catch(e){msg='Hibás mentésfájl.'}render();var b=document.getElementById('bk');if(b)b.value=msg};r.readAsText(f)}
-var VER='v85',UPD=false;try{var pv=localStorage.getItem('hn_v');if(pv&&pv!=VER)UPD=true;localStorage.setItem('hn_v',VER)}catch(e){}
+var VER='v86',UPD=false;try{var pv=localStorage.getItem('hn_v');if(pv&&pv!=VER)UPD=true;localStorage.setItem('hn_v',VER)}catch(e){}
 function cvt(v){return '<div style="display:flex;gap:6px;margin-bottom:10px">'+[['week','Hét'],['month','Hónap']].map(function(t){return '<button class="sm" style="flex:1;'+(v==t[0]?'background:var(--ac);color:#fff;border-color:var(--ac)':'')+'" onclick="go(\''+t[0]+'\')">'+t[1]+'</button>'}).join('')+'</div>'}
 var jid='',jstt='';
 function JL(){return(D['0-munka']&&D['0-munka'].p)||[]}
@@ -1997,7 +1997,7 @@ var _vst73=vSet;vSet=function(){var h=_vst73.apply(this,arguments);
  if(PM&&PMD)return '<div class="card"><h3>Magán mód</h3><button class="sm" onclick="go(\'design\')">🎨 Megjelenés</button> <button class="sm" onclick="exitPM()">Kilépés a Magán módból</button></div>';
  if(PM){var S='width:100%;padding:10px;border:1px solid var(--ln);border-radius:8px;background:var(--bg);color:var(--tx);font:inherit;margin-top:8px;box-sizing:border-box';
   h+='<div class="card"><h3>Hamis PIN</h3><p class="mut">Egy második PIN, ami egy üres, külön Magán módot nyit meg. Ha valakinek meg kell mutatnod, a valódi adat nem látszik. A hamis módban rögzített adat nem kerül a valódi tárba, és nem szinkronizálódik.</p>'+(localStorage.getItem('hn_dpin')?'<div style="color:#18a058">Be van állítva.</div><button class="sm" style="margin-top:8px" onclick="pmDecOff()">Törlés</button>':'<input id="pd_r" type="password" inputmode="numeric" placeholder="Valódi Magán PIN (megerősítés)" style="'+S+'"><input id="pd_a" type="password" inputmode="numeric" placeholder="Hamis PIN (ugyanannyi számjegy)" style="'+S+'"><input id="pd_b" type="password" inputmode="numeric" placeholder="Hamis PIN újra" style="'+S+'"><div id="pd_e" style="color:#e5484d;min-height:18px;margin-top:6px"></div><button class="sm" onclick="pmDec()">Beállítás</button>')+'</div>';return h}
- return h+'<div class="card"><h3>Magán mód láthatósága</h3><label style="display:flex;gap:8px;align-items:center"><input type="checkbox" '+(TH.pmh?'checked':'')+' onchange="pmHide(this.checked)"> Rejtett belépés (a „Több” menüben nem látszik)</label><p class="mut" style="font-size:13px">Rejtve a belépéshez tartsd nyomva a képernyő tetején a fejlécet 1-2 másodpercig.</p></div>'};
+ return h+'<div class="card"><h3>Magán mód láthatósága</h3><label style="display:flex;gap:8px;align-items:center"><input type="checkbox" '+(TH.pmh?'checked':'')+' onchange="pmHide(this.checked)"> Rejtett belépés (a „Több” menüben nem látszik)</label><label style="display:flex;gap:8px;align-items:center;margin-top:8px"><input type="checkbox" '+(localStorage.getItem('hn_pmd')=='0'?'':'checked')+' onchange="pmDotSet(this.checked)"> Halvány pont a fejlécben (fogódzó a belépéshez)</label><p class="mut" style="font-size:13px">Rejtve a belépéshez tartsd nyomva a képernyő tetején a fejlécet 1-2 másodpercig.</p></div>'};
 /* hangvezérlés a gyors bevitelhez */
 var _qd73=qaDraw;qaDraw=function(){_qd73.apply(this,arguments);var i=document.getElementById('nl65');if(!i||document.getElementById('mic73'))return;var SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return;
  i.insertAdjacentHTML('afterend','<button id="mic73" class="sm" onclick="mic73()">🎤</button>')};
@@ -2252,4 +2252,19 @@ function pmAuto(){clearTimeout(PMAT);if(!PM||PMD||!A.rt||!cfgOk())return;var a=d
 var _sc85=sched;sched=function(){var r=_sc85.apply(this,arguments);if(PM&&!PMD&&A.rt){clearTimeout(PMAT);PMAT=setTimeout(pmAuto,5000)}return r};
 var _pe85=pmEnter;pmEnter=function(dec){var r=_pe85.apply(this,arguments);if(!dec)setTimeout(pmAuto,1500);return r};
 setInterval(function(){if(PM&&!PMD&&!document.hidden)pmAuto()},60000);
+
+/* ===== v86: Magán emlékeztetők naptár-exportja, halvány belépő-pont ===== */
+function pnIcs(){var U=pnUp().filter(function(x){return x&&x.o&&x.o.t});if(!U.length){toast('Nincs közelgő emlékeztető');return}
+ var dd=function(k){return k.replace(/-/g,'')},st=new Date().toISOString().replace(/[-:]|\.\d+/g,''),o=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Hataridonaplo//HU','CALSCALE:GREGORIAN'];
+ U.forEach(function(x,i){var t=x.o.t,h=/^\d{1,2}:\d{2}$/.test(t.h||'')?t.h.padStart(5,'0'):'';
+  o.push('BEGIN:VEVENT','UID:pn'+i+dd(x.k)+(t.id||'')+'@naplo','DTSTAMP:'+st);
+  if(h){var e=new Date(x.k+'T'+h+':00');e.setMinutes(e.getMinutes()+30);var p=function(n){return(n<10?'0':'')+n};o.push('DTSTART:'+dd(x.k)+'T'+h.replace(':','')+'00','DTEND:'+e.getFullYear()+p(e.getMonth()+1)+p(e.getDate())+'T'+p(e.getHours())+p(e.getMinutes())+'00')}
+  else o.push('DTSTART;VALUE=DATE:'+dd(x.k));
+  o.push('SUMMARY:'+ie(t.x),'BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:'+ie(t.x),'TRIGGER:'+(h?'-PT10M':'PT9H'),'END:VALARM','END:VEVENT')});
+ o.push('END:VCALENDAR');fout(new File([o.join('\r\n')],'magan-emlekezteto.ics',{type:'text/calendar'}))}
+var _vpn86=vPN;vPN=function(){var h=_vpn86.apply(this,arguments);return h.replace('+ Új emlékeztető</button>','+ Új emlékeztető</button> <button class="sm" style="margin-top:10px" onclick="pnIcs()">Naptárba (.ics)</button>')};
+function pmDotSet(v){try{localStorage.setItem('hn_pmd',v?'1':'0')}catch(e){}toast(v?'A pont megjelenik a fejlécben':'A pont elrejtve');pmDot()}
+function pmDot(){try{var o=document.getElementById('pmdot');var on=!PM&&TH.pmh&&localStorage.getItem('hn_pmd')!='0'&&pmHas();var h=document.querySelector('#hd .hero')||document.getElementById('hd');
+ if(!on||!h){if(o)o.remove();return}if(o&&o.parentNode===h)return;if(o)o.remove();var d=document.createElement('span');d.id='pmdot';d.style.cssText='position:absolute;right:12px;bottom:9px;width:6px;height:6px;border-radius:50%;background:#fff;opacity:.3;pointer-events:none';if(getComputedStyle(h).position=='static')h.style.position='relative';h.appendChild(d)}catch(e){}}
+var _post86=post;post=function(){_post86.apply(this,arguments);pmDot()};
 </script></body></html>
