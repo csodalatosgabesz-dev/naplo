@@ -565,7 +565,7 @@ function bkOld(){var b=localStorage.getItem('hn_bk');return!b||(new Date(today)-
 function bf(){var f=new File([JSON.stringify({v:1,t:new Date().toISOString(),d:PM?REAL:D})],'naplo-mentes-'+today+'.json',{type:'application/json'});try{localStorage.setItem('hn_bk',today)}catch(e){}
  if(fsave(f)){}else if(navigator.canShare&&navigator.canShare({files:[f]}))navigator.share({files:[f]}).catch(function(){});else{var a=document.createElement('a');a.href=URL.createObjectURL(f);a.download=f.name;a.click()}render()}
 function rf(inp){var f=inp.files[0];if(!f)return;var r=new FileReader();r.onload=function(){var msg;try{var o=JSON.parse(r.result),d=o.d||o,n=0,t=Date.now();for(var k in d){if(!d[k]||typeof d[k]!='object')continue;var l=D[k];if(!l||(d[k].u||0)>(l.u||0)){D[k]=d[k];D[k].u=D[k].u||t;dirty[k]=1;n++}}save();sched();msg=n+' nap/tétel betöltve a fájlból.'}catch(e){msg='Hibás mentésfájl.'}render();var b=document.getElementById('bk');if(b)b.value=msg};r.readAsText(f)}
-var VER='v84',UPD=false;try{var pv=localStorage.getItem('hn_v');if(pv&&pv!=VER)UPD=true;localStorage.setItem('hn_v',VER)}catch(e){}
+var VER='v85',UPD=false;try{var pv=localStorage.getItem('hn_v');if(pv&&pv!=VER)UPD=true;localStorage.setItem('hn_v',VER)}catch(e){}
 function cvt(v){return '<div style="display:flex;gap:6px;margin-bottom:10px">'+[['week','Hét'],['month','Hónap']].map(function(t){return '<button class="sm" style="flex:1;'+(v==t[0]?'background:var(--ac);color:#fff;border-color:var(--ac)':'')+'" onclick="go(\''+t[0]+'\')">'+t[1]+'</button>'}).join('')+'</div>'}
 var jid='',jstt='';
 function JL(){return(D['0-munka']&&D['0-munka'].p)||[]}
@@ -2200,8 +2200,8 @@ function pmClean(){var v=document.getElementById('v');if(!v||view!='sum')return;
  [].slice.call(v.querySelectorAll('input')).forEach(function(i){var ph=i.placeholder||'';if(/bevételi cél|Adóhatár/i.test(ph))i.remove()});
  var w=document.createTreeWalker(v,NodeFilter.SHOW_TEXT),n,L=[];while(n=w.nextNode())L.push(n);L.forEach(function(n){var t=n.nodeValue;if(/Nyereség|nyereség/.test(t))n.nodeValue=t.replace(/Havi átlag nyereség/g,'Havi átlag egyenleg').replace(/Havi nyereség/g,'Havi egyenleg').replace(/Nyereség/g,'Egyenleg').replace(/nyereség/g,'egyenleg')});
  [].slice.call(v.querySelectorAll('details')).forEach(function(d){if(!d.querySelector('.card'))d.remove()})}
-var _post80=post;post=function(){_post80.apply(this,arguments);try{if(PM)pmClean();if(PM){var e=document.getElementById('hsy');if(e&&A.rt)e.innerHTML=' · 🔒 szinkron szünetel'}}catch(x){}};
-var _hs80=hsync;hsync=function(){_hs80.apply(this,arguments);try{if(PM){var e=document.getElementById('hsy');if(e&&A.rt)e.innerHTML=' · 🔒 szinkron szünetel'}}catch(x){}};
+var _post80=post;post=function(){_post80.apply(this,arguments);try{if(PM)pmClean();if(PM){var e=document.getElementById('hsy');if(e&&A.rt)e.innerHTML=PMD?' · 🔒 szinkron szünetel':' · 🔒 <i class="sd sd-'+(SYNCST=='err'?'err':'ok')+'"></i>'+(SYNCST=='err'?'Szinkron hiba':'Szinkronizálva')}}catch(x){}};
+var _hs80=hsync;hsync=function(){_hs80.apply(this,arguments);try{if(PM){var e=document.getElementById('hsy');if(e&&A.rt)e.innerHTML=PMD?' · 🔒 szinkron szünetel':' · 🔒 <i class="sd sd-'+(SYNCST=='err'?'err':'ok')+'"></i>'+(SYNCST=='err'?'Szinkron hiba':'Szinkronizálva')}}catch(x){}};
 
 /* ===== v81: Magán PIN számbillentyűvel és automatikus belépéssel; audit-javítások ===== */
 var LKM=null,PFAIL=0,LKT0='',LKF0='';
@@ -2230,17 +2230,26 @@ var _qd81=qaDraw;qaDraw=function(){_qd81.apply(this,arguments);if(PM){var b=docu
 /* ===== v82: Magán módban kézi szinkron + Állampapír elrendezés ===== */
 (function(){var st=document.createElement('style');st.textContent='.pab{padding:10px 0;border-bottom:1px solid var(--ln)}.pab:last-child{border-bottom:0}.pah{display:flex;justify-content:space-between;gap:10px;align-items:baseline}.pah b{min-width:0;overflow-wrap:anywhere}.pah strong{white-space:nowrap}.pad{font-size:13px;margin-top:3px}.pax{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.pax .sm{white-space:nowrap}#pmso{position:fixed;inset:0;z-index:99999;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:16px}';document.head.appendChild(st)})();
 var PMSYN=0;
-async function pmSyncNow(){
+async function pmSyncNow(quiet){
  if(!PM||PMD||PMSYN)return;
  if(!A.rt||!cfgOk()){alert('A szinkron nincs bekapcsolva. Lépj ki a Magán módból, és a Beállítások → Szinkron résznél jelentkezz be.');return}
- PMSYN=1;var o=document.createElement('div');o.id='pmso';o.textContent='↻ Szinkronizálás…';document.body.appendChild(o);
- var pD=D,pDi=dirty;
+ PMSYN=1;var o=document.createElement('div');o.id='pmso';o.textContent='↻ Szinkronizálás…';if(quiet){o.style.background='rgba(0,0,0,.25)';o.style.fontSize='14px';o.style.color='#fff'}document.body.appendChild(o);
+ var pD=D,pDi=dirty,sy=window.scrollY;
  try{save()}catch(e){}
  D=REAL;dirty=RD;PM=false;
  try{await sync()}catch(e){}
- finally{PM=true;D=pmProxy();dirty=pmDirty();PMACT=Date.now();PMSYN=0;if(o.parentNode)o.remove();try{render()}catch(e){}}
+ finally{PM=true;D=pmProxy();dirty=pmDirty();PMACT=Date.now();PMSYN=0;if(o.parentNode)o.remove();try{render();window.scrollTo(0,sy)}catch(e){}}
  var m=document.getElementById('pmsm');if(m)m.textContent=smsg;
 }
 var _r82=render;render=function(){_r82.apply(this,arguments);try{if(PM&&!PMD){var b=document.getElementById('pmb72');if(b&&!document.getElementById('pmsy82')){var k=b.querySelector('button');k.insertAdjacentHTML('beforebegin','<button id="pmsy82" class="sm" onclick="pmSyncNow()" style="margin-right:6px">↻ Szinkron</button>')}}}catch(e){}};
-var _vs82=vSet;vSet=function(){var h=_vs82.apply(this,arguments);if(PM&&!PMD&&typeof h=='string'&&h.indexOf('pmsc82')<0){h+='<div class="card" id="pmsc82"><h3>Szinkronizálás</h3><div class="mut" style="font-size:13px;margin-bottom:8px">Magán módban a háttér-szinkron szünetel, hogy a magán adataid ne mozogjanak észrevétlenül. A gombbal bármikor kézzel szinkronizálhatsz; kilépéskor is automatikusan szinkronizál.</div><div id="pmsm" class="mut" style="margin:8px 0">'+esc(smsg||'')+'</div><button class="sm" onclick="pmSyncNow()">↻ Szinkron most</button></div>'}return h};
+var _vs82=vSet;vSet=function(){var h=_vs82.apply(this,arguments);if(PM&&!PMD&&typeof h=='string'&&h.indexOf('pmsc82')<0){h+='<div class="card" id="pmsc82"><h3>Szinkronizálás</h3><div class="mut" style="font-size:13px;margin-bottom:8px">A magán adatok is szinkronizálódnak a többi eszközöddel (ugyanúgy titkosítva, mint a céges adatok): belépéskor, néhány másodperccel egy módosítás után, kilépéskor és percenként. A gombbal bármikor kézzel is indíthatod. A hamis PIN mögötti tár nem szinkronizál.</div><div id="pmsm" class="mut" style="margin:8px 0">'+esc(smsg||'')+'</div><button class="sm" onclick="pmSyncNow()">↻ Szinkron most</button></div>'}return h};
+
+/* ===== v85: Magán adatok automatikus szinkronja ===== */
+var PMAT=null;
+function pmAuto(){clearTimeout(PMAT);if(!PM||PMD||!A.rt||!cfgOk())return;var a=document.activeElement,lk=document.getElementById('lk'),qa=document.getElementById('qa');
+ if(PMSYN||busy||document.hidden||(lk&&lk.style.display=='flex')||(qa&&qa.style.display=='block')||(a&&/INPUT|TEXTAREA|SELECT/.test(a.tagName))){PMAT=setTimeout(pmAuto,4000);return}
+ pmSyncNow(true)}
+var _sc85=sched;sched=function(){var r=_sc85.apply(this,arguments);if(PM&&!PMD&&A.rt){clearTimeout(PMAT);PMAT=setTimeout(pmAuto,5000)}return r};
+var _pe85=pmEnter;pmEnter=function(dec){var r=_pe85.apply(this,arguments);if(!dec)setTimeout(pmAuto,1500);return r};
+setInterval(function(){if(PM&&!PMD&&!document.hidden)pmAuto()},60000);
 </script></body></html>
